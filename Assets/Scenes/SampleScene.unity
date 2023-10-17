@@ -140,7 +140,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &54886561
 Transform:
   m_ObjectHideFlags: 0
@@ -325,11 +325,11 @@ GameObject:
   m_Component:
   - component: {fileID: 741472327}
   - component: {fileID: 741472331}
+  - component: {fileID: 741472333}
   - component: {fileID: 741472330}
   - component: {fileID: 741472329}
   - component: {fileID: 741472328}
   - component: {fileID: 741472332}
-  - component: {fileID: 741472333}
   m_Layer: 0
   m_Name: VRCamera
   m_TagString: MainCamera
@@ -497,10 +497,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c9209f053d0bb2458500280c2522794, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _headsetOnHead:
-    actionPath: /actions/default/in/HeadsetOnHead
-    needsReinit: 0
-  _defaultEyeHeight: 2
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
