@@ -11,7 +11,7 @@ namespace SuperliVR.Camera
 
         private void Update()
         {
-            if (!VRHelper.Instance.HeadsetOnHead)
+            //if (!VRHelper.Instance.HeadsetOnHead)
                 RegularCameraUpdate();
         }
 

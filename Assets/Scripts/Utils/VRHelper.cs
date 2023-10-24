@@ -6,7 +6,8 @@ namespace Utils
     [CreateAssetMenu(fileName = "VRHelper", menuName = "ScriptableObjects/VRHelper")]
     public class VRHelper : ScriptableObject
     {
-        public         bool                   HeadsetOnHead  => _headsetOnHead.GetStateDown(SteamVR_Input_Sources.Head);
+        // TODO: Make this work properly
+        //public         bool                   HeadsetOnHead  => SteamVR_Actions.default_HeadsetOnHead.GetStateDown(SteamVR_Input_Sources.Head);
                                                              
         public  static VRHelper               Instance 
         {
@@ -21,9 +22,6 @@ namespace Utils
                 return _instance;
             }
         }
-
-        [SerializeField]
-        private        SteamVR_Action_Boolean _headsetOnHead = SteamVR_Input.GetBooleanAction("HeadsetOnHead");
 
         private static VRHelper               _instance;
     }
