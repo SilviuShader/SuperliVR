@@ -5,7 +5,7 @@
       "app_key": "application.generated.unity.superlivr.exe",
       "launch_type": "url",
       "url": "steam://launch/",
-      "action_manifest_path": "C:\\Users\\SilviuShader\\Documents\\Unity\\GMRV\\DSRVA\\SuperliVR_Old\\Assets\\StreamingAssets\\SteamVR\\actions.json",
+      "action_manifest_path": "C:\\Users\\SilviuShader\\Documents\\Unity\\GMRV\\DSRVA\\SuperliVR\\Assets\\StreamingAssets\\SteamVR\\actions.json",
       "strings": {
         "en_us": {
           "name": "SuperliVR [Testing]"

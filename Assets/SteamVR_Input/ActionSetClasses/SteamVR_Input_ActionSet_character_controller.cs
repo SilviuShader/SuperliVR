@@ -24,5 +24,13 @@ namespace Valve.VR
                 return SteamVR_Actions.character_controller_JoystickMovement;
             }
         }
+        
+        public virtual SteamVR_Action_Boolean PickObject
+        {
+            get
+            {
+                return SteamVR_Actions.character_controller_PickObject;
+            }
+        }
     }
 }

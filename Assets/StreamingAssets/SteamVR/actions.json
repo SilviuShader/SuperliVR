@@ -3,6 +3,10 @@
     {
       "name": "/actions/character_controller/in/JoystickMovement",
       "type": "vector2"
+    },
+    {
+      "name": "/actions/character_controller/in/PickObject",
+      "type": "boolean"
     }
   ],
   "action_sets": [
@@ -68,7 +72,8 @@
   "localization": [
     {
       "language_tag": "en_US",
-      "/actions/character_controller/in/JoystickMovement": "Joystick Movement"
+      "/actions/character_controller/in/JoystickMovement": "Joystick Movement",
+      "/actions/character_controller/in/PickObject": "Pick Object"
     }
   ]
 }

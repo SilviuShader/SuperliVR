@@ -1056,7 +1056,15 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 152116, guid: 002ce902530453c4f8c8289934f2578a,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1772094220}
+    - targetCorrespondingSourceObject: {fileID: 152116, guid: 002ce902530453c4f8c8289934f2578a,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1772094219}
   m_SourcePrefab: {fileID: 100100000, guid: 002ce902530453c4f8c8289934f2578a, type: 3}
 --- !u!4 &1772094214 stripped
 Transform:
@@ -1064,6 +1072,44 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1772094213}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1772094215 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 152116, guid: 002ce902530453c4f8c8289934f2578a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1772094213}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1772094219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1772094215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0c3e6ddae9127945b5e0fbe2b489d5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxPickingDist: 10
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  _pickObjectAction:
+    actionPath: /actions/character_controller/in/PickObject
+    needsReinit: 1
+--- !u!114 &1772094220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1772094215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c99acd3c2846dc6488cbda888a2a4041, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _distanceFromWand: 2
 --- !u!1 &1868943744
 GameObject:
   m_ObjectHideFlags: 0

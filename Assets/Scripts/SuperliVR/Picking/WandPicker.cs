@@ -25,6 +25,8 @@ namespace SuperliVR.Picking
             set => _direction = value.normalized;
         }
 
+        public  bool      CurrentlyPicking  => PickedObject != null;
+
         [SerializeField]
         private float     _distanceFromWand = 2.0f;
         
