@@ -1,5 +1,4 @@
 using UnityEngine;
-using Utils;
 
 namespace SuperliVR.Movement
 {
@@ -7,24 +6,38 @@ namespace SuperliVR.Movement
     public class PlayerInteractions : MonoBehaviour
     {
         [SerializeField]
-        private float     _movementSpeed   = 1.0f;
-        [SerializeField]
-        private float     _maxAcceleration = 10.0f;
+        private float     _movementSpeed    = 1.0f;
+        [SerializeField]                    
+        private float     _maxAcceleration  = 10.0f;
+        [SerializeField] 
+        private Transform _playerInputSpace = default;
          
-        private Vector2   _movement        = Vector2.zero;
-        private Vector3   _desiredVelocity = Vector3.zero;
+        private Vector3   _movement         = Vector3.zero;
+        private Vector3   _desiredVelocity  = Vector3.zero;
 
         private Rigidbody _rigidbody;
 
-        public void Move(Vector2 direction) =>
-            _movement = Vector2.ClampMagnitude(direction, 1.0f);
+        public void Move(Vector2 direction)
+        {
+            var input = Vector2.ClampMagnitude(direction, 1.0f);
+
+            var forward = _playerInputSpace.forward;
+            forward.y = 0f;
+            forward.Normalize();
+
+            var right = _playerInputSpace.right;
+            right.y = 0f;
+            right.Normalize();
+
+            _movement = forward * input.y + right * input.x;
+        }
 
         private void Awake() =>
             _rigidbody = GetComponent<Rigidbody>();
 
         private void Update()
         {
-            _desiredVelocity = (Vector3.right * _movement.x + Vector3.forward * _movement.y) * _movementSpeed;
+            _desiredVelocity = _movement * _movementSpeed;
         }
 
         private void FixedUpdate()
