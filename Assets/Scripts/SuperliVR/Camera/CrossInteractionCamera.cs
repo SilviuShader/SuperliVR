@@ -1,9 +1,10 @@
 using UnityEngine;
-
+using UnityEngine.InputSystem.XR;
 using Utils;
 
 namespace SuperliVR.Camera
 {
+    [RequireComponent(typeof(TrackedPoseDriver))]
     public class CrossInteractionCamera : MonoBehaviour
     {
         [SerializeField]
