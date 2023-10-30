@@ -261,6 +261,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 1e806919-bab2-47d5-bdad-48ad7a6912d5
     m_ActionName: Ground Movement/Move[/Keyboard/w,/Keyboard/a,/Keyboard/s,/Keyboard/d]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 741472333}
+        m_TargetAssemblyTypeName: SuperliVR.Camera.CrossInteractionCamera, Assembly-CSharp
+        m_MethodName: Orbit
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: cbfdbcf1-2b9b-4a12-8ef6-79286eefd492
+    m_ActionName: Ground Movement/OrbitCamera[/Mouse/delta]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Ground Movement
@@ -579,6 +595,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _defaultEyeHeight: 2
+  _defaultRotationSpeed: 50
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
