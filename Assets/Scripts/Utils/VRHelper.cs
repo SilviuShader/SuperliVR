@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.XR;
 using Valve.VR;
 
 namespace Utils
@@ -6,8 +7,7 @@ namespace Utils
     [CreateAssetMenu(fileName = "VRHelper", menuName = "ScriptableObjects/VRHelper")]
     public class VRHelper : ScriptableObject
     {
-        // TODO: Make this work properly
-        //public         bool                   HeadsetOnHead  => SteamVR_Actions.default_HeadsetOnHead.GetStateDown(SteamVR_Input_Sources.Head);
+        public         bool                   VRMode  => XRSettings.enabled;
                                                              
         public  static VRHelper               Instance 
         {

@@ -17,8 +17,8 @@ public class VRPlayerController : MonoBehaviour
 
     private void Update()
     {
-        //if (!VRHelper.Instance.HeadsetOnHead)
-        //    return;
+        if (!VRHelper.Instance.VRMode)
+            return;
 
         var axis = _joystickMovementAction[SteamVR_Input_Sources.LeftHand].axis;
         _playerInteractions.Move(axis);

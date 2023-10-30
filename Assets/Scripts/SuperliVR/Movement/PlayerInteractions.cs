@@ -1,4 +1,5 @@
 using UnityEngine;
+using Utils;
 
 namespace SuperliVR.Movement
 {
@@ -21,9 +22,11 @@ namespace SuperliVR.Movement
         private void Awake() =>
             _rigidbody = GetComponent<Rigidbody>();
 
-        private void Update() =>
+        private void Update()
+        {
             _desiredVelocity = (Vector3.right * _movement.x + Vector3.forward * _movement.y) * _movementSpeed;
-        
+        }
+
         private void FixedUpdate()
         {
             var velocity = _rigidbody.velocity;
