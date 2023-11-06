@@ -7,12 +7,7 @@ namespace SuperliVR.Picking.Controllers
     [RequireComponent(typeof(WandPicker))]
     public class VRWand : MonoBehaviour
     {
-        private Vector3                ForwardDirection => transform.up;
-                                       
-        [SerializeField]               
-        private float                  _maxPickingDist  = 10.0f;
-        [SerializeField]
-        private LayerMask              _layerMask       = -1;
+        private Vector3                ForwardDirection => transform.forward;
         // TODO: Wrap this..
         [SerializeField]
         private SteamVR_Action_Boolean _pickObjectAction = SteamVR_Input.GetBooleanAction("PickObject");
@@ -28,38 +23,14 @@ namespace SuperliVR.Picking.Controllers
                 return;
 
             if (!_picker.CurrentlyPicking)
-                CheckPick();
-            if (_picker.CurrentlyPicking)
-                CurrentlyPickingUpdate();
-        }
-
-        private void CheckPick()
-        {
-            if (!_pickObjectAction[SteamVR_Input_Sources.RightHand].state)
-                return;
+                _picker.CheckPick(
+                    _pickObjectAction[SteamVR_Input_Sources.RightHand].state, 
+                    transform.position, 
+                    ForwardDirection);
             
-            var dir = ForwardDirection;
-
-            if (Physics.Raycast(transform.position, dir, out var hit, _maxPickingDist, _layerMask))
-            {
-                // TODO: create a script for the pickable objects that require the rigidbody component
-                var rigidbody = hit.transform.GetComponent<Rigidbody>();
-                if (rigidbody != null)
-                    _picker.PickedObject = rigidbody;
-            }
-
-            _picker.Direction = dir;
-        }
-
-        private void CurrentlyPickingUpdate()
-        {
-            if (!_pickObjectAction[SteamVR_Input_Sources.RightHand].state)
-            {
-                _picker.PickedObject = null;
-                return;
-            }
-
-            _picker.Direction = transform.up;
+            if (_picker.CurrentlyPicking)
+                _picker.CurrentlyPickingUpdate(_pickObjectAction[SteamVR_Input_Sources.RightHand].state,
+                    ForwardDirection);
         }
     }
 }

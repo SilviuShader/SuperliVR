@@ -1,44 +1,76 @@
+using UnityEditor.Sprites;
 using UnityEngine;
 
 namespace SuperliVR.Picking
 {
     public class WandPicker : MonoBehaviour
     {
-        public  Rigidbody PickedObject
+        public  PickableObject PickedObject
         {
             get => _pickedObject;
             set
             {
                 if (_pickedObject != null)
-                    _pickedObject.isKinematic = false;
+                    _pickedObject.DropDown();
                 
                 _pickedObject = value;
 
                 if (_pickedObject != null)
-                    _pickedObject.isKinematic = true;
+                    _pickedObject.PickUp();
             }
         }
 
-        public  Vector3   Direction
+        public  Vector3        Direction
         {
             get => _direction;
             set => _direction = value.normalized;
         }
 
-        public  bool      CurrentlyPicking  => PickedObject != null;
+        public  bool           CurrentlyPicking  => PickedObject != null;
+                               
+        [SerializeField]       
+        private float          _distanceFromWand = 2.0f;
 
         [SerializeField]
-        private float     _distanceFromWand = 2.0f;
-        
-        private Rigidbody _pickedObject;
-        private Vector3   _direction        = Vector3.forward;
+        private float          _maxPickingDist   = 10.0f;
+        [SerializeField] 
+        private LayerMask      _layerMask        = -1;
+         
+        private PickableObject _pickedObject;
+        private Vector3        _direction        = Vector3.forward;
 
-        private void Update()
+        public void CheckPick(bool pickDown, Vector3 raycastOrigin, Vector3 raycastDirection)
+        {
+            if (!pickDown)
+                return;
+
+            if (Physics.Raycast(raycastOrigin, raycastDirection, out var hit, _maxPickingDist, _layerMask))
+            {
+                var pickedObject = hit.transform.GetComponent<PickableObject>();
+                if (pickedObject != null)
+                    PickedObject = pickedObject;
+            }
+
+            Direction = raycastDirection;
+        }
+
+        public void CurrentlyPickingUpdate(bool pickDown, Vector3 pickDirection)
+        {
+            if (!pickDown)
+            {
+                PickedObject = null;
+                return;
+            }
+
+            Direction = pickDirection;
+        }
+
+        private void LateUpdate()
         {
             if (PickedObject == null)
                 return;
-
-            PickedObject.position = transform.position + Direction * _distanceFromWand;
+            
+            PickedObject.SetPosition(transform.position + Direction * _distanceFromWand);
         }
     }
 }
