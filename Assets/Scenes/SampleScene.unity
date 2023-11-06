@@ -277,6 +277,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: cbfdbcf1-2b9b-4a12-8ef6-79286eefd492
     m_ActionName: Ground Movement/OrbitCamera[/Mouse/delta]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1928738776}
+        m_TargetAssemblyTypeName: SuperliVR.Picking.Controllers.DesktopWand, Assembly-CSharp
+        m_MethodName: OnPick
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 7f5640e3-8619-4d4e-ad6b-6b6333386054
+    m_ActionName: Ground Movement/PickObject[/Mouse/leftButton]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Ground Movement
@@ -1056,15 +1072,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 152116, guid: 002ce902530453c4f8c8289934f2578a,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1772094220}
-    - targetCorrespondingSourceObject: {fileID: 152116, guid: 002ce902530453c4f8c8289934f2578a,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1772094219}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 002ce902530453c4f8c8289934f2578a, type: 3}
 --- !u!4 &1772094214 stripped
 Transform:
@@ -1072,44 +1080,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1772094213}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1772094215 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 152116, guid: 002ce902530453c4f8c8289934f2578a,
-    type: 3}
-  m_PrefabInstance: {fileID: 1772094213}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1772094219
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1772094215}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0c3e6ddae9127945b5e0fbe2b489d5b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _maxPickingDist: 10
-  _layerMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  _pickObjectAction:
-    actionPath: /actions/character_controller/in/PickObject
-    needsReinit: 1
---- !u!114 &1772094220
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1772094215}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c99acd3c2846dc6488cbda888a2a4041, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _distanceFromWand: 2
 --- !u!1 &1868943744
 GameObject:
   m_ObjectHideFlags: 0
@@ -1175,6 +1145,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1928738774}
   - component: {fileID: 1928738775}
+  - component: {fileID: 1928738778}
+  - component: {fileID: 1928738777}
+  - component: {fileID: 1928738776}
   m_Layer: 0
   m_Name: Wand Parent
   m_TagString: Untagged
@@ -1216,6 +1189,59 @@ MonoBehaviour:
   m_TrackingType: 0
   m_UpdateType: 0
   m_UseRelativeTransform: 0
+--- !u!114 &1928738776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1928738773}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bb3966d3abb0c449aeb6ba910b9e0bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerCamera: {fileID: 741472331}
+  _distanceFromCamera: 0.4
+  _offset: {x: -0.05, y: -0.02}
+  _defaultWandRotation: {x: -75, y: -25, z: 50}
+  _wandRotationSpeed: 90
+  _maxPickingDist: 10
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 64
+--- !u!114 &1928738777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1928738773}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0c3e6ddae9127945b5e0fbe2b489d5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxPickingDist: 10
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  _pickObjectAction:
+    actionPath: /actions/character_controller/in/PickObject
+    needsReinit: 0
+--- !u!114 &1928738778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1928738773}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c99acd3c2846dc6488cbda888a2a4041, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _distanceFromWand: 2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

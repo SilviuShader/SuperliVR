@@ -10,12 +10,12 @@ namespace SuperliVR.Picking
             set
             {
                 if (_pickedObject != null)
-                {
                     _pickedObject.isKinematic = false;
-                }
-
+                
                 _pickedObject = value;
-                _pickedObject.isKinematic = true;
+
+                if (_pickedObject != null)
+                    _pickedObject.isKinematic = true;
             }
         }
 

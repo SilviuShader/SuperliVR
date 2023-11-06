@@ -1,4 +1,5 @@
 using UnityEngine;
+using Utils;
 using Valve.VR;
 
 namespace SuperliVR.Picking.Controllers
@@ -23,6 +24,9 @@ namespace SuperliVR.Picking.Controllers
 
         private void Update()
         {
+            if (!VRHelper.Instance.VRMode)
+                return;
+
             if (!_picker.CurrentlyPicking)
                 CheckPick();
             if (_picker.CurrentlyPicking)
