@@ -1,9 +1,12 @@
+using System.Numerics;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Vector3 = UnityEngine.Vector3;
 
 namespace SuperliVR.Picking
 {
-    [RequireComponent(typeof(Rigidbody), typeof(MeshRenderer))]
+    [RequireComponent(typeof(Collider), typeof(Rigidbody), typeof(MeshRenderer))]
     public class PickableObject : MonoBehaviour
     {
         [SerializeField]
@@ -17,6 +20,7 @@ namespace SuperliVR.Picking
         private Vector3      _placedScale;
         private Vector3      _currentScale;
 
+        private Collider     _collider;
         private Rigidbody    _rigidbody;
         private MeshRenderer _meshRenderer;
 
@@ -31,6 +35,7 @@ namespace SuperliVR.Picking
             _meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             _currentScale = _placedScale;
             _pickUpDistance = pickUpDistance;
+            _collider.isTrigger = true;
 
             gameObject.layer = _currentlyPickedLayer;
         }
@@ -40,6 +45,7 @@ namespace SuperliVR.Picking
             _rigidbody.isKinematic = false;
             _meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
             _placedScale = _currentScale;
+            _collider.isTrigger = false;
 
             gameObject.layer = _pickableLayer;
 
@@ -47,53 +53,93 @@ namespace SuperliVR.Picking
 
         public void SetDirection(UnityEngine.Camera referenceCamera, Vector3 wandPosition, Vector3 direction)
         {
-            var distance = 0.0f;
+            direction = referenceCamera.transform.forward;
             var rayOrigin = referenceCamera.transform.position; // TODO: Use wand position here
-            var currentPosition = rayOrigin;
-
-            var anyRaycast = false;
             var raycasts = 10;
 
-            for (var i = 0; i < raycasts + 1; i++)
-            {
-                if (i < raycasts)
-                {
-                    var hitDistance = 0.0f;
-                    if (Physics.Raycast(currentPosition, direction, out var hit, _maxRaycastDistance,
-                            _sceneRaycastMask))
-                    {
-                        hitDistance = hit.distance; // TODO: Change here when using the wand pos
-                        anyRaycast = true;
-                    }
-                    distance += hitDistance;
+            _currentScale = _initialScale;
 
-                    var previousSubtract = 0.0f;
-                    for (var j = 0; j < _integrationSteps; j++)
-                    {
-                        _currentScale = (distance * _placedScale) / _pickUpDistance;
-                        var currentSubtract = _currentScale.x / 2.0f;
-                        distance += previousSubtract - currentSubtract;
-                        previousSubtract = currentSubtract;
-                    }
+            _currentScale = 0.01f * Vector3.one;
+
+            string message = "";
+
+            /*
+            if(Physics.CheckCapsule())
+
+            for (var i = 0; i < raycasts; i++)
+            {
+                message += _currentScale.x + " ";
+                if (Physics.CheckCapsule(rayOrigin, rayOrigin + direction * _maxRaycastDistance))
+                {
+                    message += "(" + hit.collider.name + ")";
+                    distance = hit.distance;
                 }
                 else
                 {
-                    if (!anyRaycast)
-                        distance = _pickUpDistance;
+                    message += "(pula)";
                 }
 
-                currentPosition =
-                    rayOrigin + distance *
-                    direction; // TODO: After wand position is used for way origin, then pythagorean theory must be used here
+                _currentScale = (distance * _placedScale) / _pickUpDistance;
             }
 
-            transform.localScale = _currentScale;
+            Debug.Log(message);
+
+            */
+
+            var maxDist = _maxRaycastDistance;
+            if (Physics.Raycast(rayOrigin, direction, out var hit, _maxRaycastDistance, _sceneRaycastMask))
+                maxDist = hit.distance; // TODO: Change this when chaning to origin of wand.
+
+            var smallRadius = 0.0f;
+            var bigRadius = GetRadius(ref maxDist);
+
+            Debug.Log(smallRadius + " " + bigRadius);
+
+            var epsilon = 0.01f;
+
+            var currentRadius = (smallRadius + bigRadius) * 0.5f;
+            var goToDist = maxDist * 0.9f;
+
+            for (var i = 0; i < raycasts; i++)
+            {
+                if (Physics.CheckCapsule(rayOrigin + (direction * currentRadius), rayOrigin + direction * (goToDist - epsilon - currentRadius),
+                        currentRadius * 0.5f, _sceneRaycastMask))
+                {
+                    bigRadius = currentRadius;
+                    currentRadius = (bigRadius + smallRadius) / 2.0f;
+                }
+                else
+                {
+                    smallRadius = currentRadius;
+                    currentRadius = (bigRadius + smallRadius) / 2.0f;
+                }
+            }
+
+            goToDist = (currentRadius * _pickUpDistance) / _placedScale.x;
+            _currentScale = Vector3.one * currentRadius;
             
-            transform.position = currentPosition; 
+            transform.localScale = _currentScale;
+            transform.position = rayOrigin + goToDist * direction; 
+        }
+
+        private float GetRadius(ref float distance)
+        {
+            var radius = 0.0f;
+            var previousSubtract = 0.0f;
+            for (var j = 0; j < _integrationSteps; j++)
+            {
+                radius = (distance * _placedScale.x) / _pickUpDistance;
+                var currentSubtract = radius;
+                distance += previousSubtract - currentSubtract;
+                previousSubtract = currentSubtract;
+            }
+
+            return radius;
         }
 
         private void Awake()
         {
+            _collider     = GetComponent<Collider>();
             _rigidbody    = GetComponent<Rigidbody>();
             _meshRenderer = GetComponent<MeshRenderer>();
 

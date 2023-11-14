@@ -137,7 +137,7 @@ GameObject:
   - component: {fileID: 54886564}
   - component: {fileID: 54886566}
   - component: {fileID: 54886565}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: PlayerCharacter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -576,8 +576,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _sceneRaycastMask:
     serializedVersion: 2
-    m_Bits: 211
+    m_Bits: 193
   _maxRaycastDistance: 100
+  _integrationSteps: 10
 --- !u!1 &741472326
 GameObject:
   m_ObjectHideFlags: 0
@@ -593,7 +594,7 @@ GameObject:
   - component: {fileID: 741472329}
   - component: {fileID: 741472328}
   - component: {fileID: 741472332}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: VRCamera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -822,7 +823,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 927526283}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: SteamVRObjects
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -964,7 +965,7 @@ GameObject:
   - component: {fileID: 1272622445}
   - component: {fileID: 1272622444}
   - component: {fileID: 1272622443}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: '[SteamVR]'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1292,6 +1293,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: wand03_purple
       objectReference: {fileID: 0}
+    - target: {fileID: 152116, guid: 002ce902530453c4f8c8289934f2578a, type: 3}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 423422, guid: 002ce902530453c4f8c8289934f2578a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1353,7 +1358,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1868943745}
   - component: {fileID: 1868943746}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1516,7 +1521,7 @@ GameObject:
   - component: {fileID: 1928738778}
   - component: {fileID: 1928738777}
   - component: {fileID: 1928738776}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Wand Parent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1602,7 +1607,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _distanceFromWand: 2
-  _maxPickingDist: 10
+  _maxPickingDist: 100
   _layerMask:
     serializedVersion: 2
     m_Bits: 64
