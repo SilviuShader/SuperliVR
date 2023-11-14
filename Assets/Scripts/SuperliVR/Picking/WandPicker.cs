@@ -1,11 +1,10 @@
-using UnityEditor.Sprites;
 using UnityEngine;
 
 namespace SuperliVR.Picking
 {
     public class WandPicker : MonoBehaviour
     {
-        public  PickableObject PickedObject
+        public  PickableObject     PickedObject
         {
             get => _pickedObject;
             set
@@ -16,28 +15,32 @@ namespace SuperliVR.Picking
                 _pickedObject = value;
 
                 if (_pickedObject != null)
-                    _pickedObject.PickUp();
+                    _pickedObject.PickUp(
+                        Vector3.Distance(
+                            _referenceCamera.transform.position, 
+                            _pickedObject.transform.position));
             }
         }
 
-        public  Vector3        Direction
+        public  Vector3            Direction
         {
             get => _direction;
             set => _direction = value.normalized;
         }
 
-        public  bool           CurrentlyPicking  => PickedObject != null;
-                               
-        [SerializeField]       
-        private float          _distanceFromWand = 2.0f;
-
+        public  bool               CurrentlyPicking  => PickedObject != null;
+                                   
+        [SerializeField]           
+        private float              _distanceFromWand = 2.0f;
+        [SerializeField]           
+        private float              _maxPickingDist   = 10.0f;
+        [SerializeField]           
+        private LayerMask          _layerMask        = -1;
         [SerializeField]
-        private float          _maxPickingDist   = 10.0f;
-        [SerializeField] 
-        private LayerMask      _layerMask        = -1;
-         
-        private PickableObject _pickedObject;
-        private Vector3        _direction        = Vector3.forward;
+        private UnityEngine.Camera _referenceCamera  = null;
+
+        private PickableObject     _pickedObject;
+        private Vector3            _direction        = Vector3.forward;
 
         public void CheckPick(bool pickDown, Vector3 raycastOrigin, Vector3 raycastDirection)
         {
@@ -70,7 +73,8 @@ namespace SuperliVR.Picking
             if (PickedObject == null)
                 return;
             
-            PickedObject.SetPosition(transform.position + Direction * _distanceFromWand);
+            PickedObject.SetDirection(_referenceCamera, transform.position, Direction);
+            //PickedObject.SetPosition(transform.position + Direction * _distanceFromWand);
         }
     }
 }

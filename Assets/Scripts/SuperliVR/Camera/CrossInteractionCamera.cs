@@ -49,6 +49,9 @@ namespace SuperliVR.Camera
 
         private void RegularCameraUpdate()
         {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+
             Quaternion lookRotation;
             if (ManualRotation())
             {
