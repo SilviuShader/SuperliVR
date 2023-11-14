@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace SuperliVR.Picking
 {
@@ -31,7 +32,6 @@ namespace SuperliVR.Picking
             _currentScale = _placedScale;
             _pickUpDistance = pickUpDistance;
 
-
             gameObject.layer = _currentlyPickedLayer;
         }
 
@@ -47,24 +47,49 @@ namespace SuperliVR.Picking
 
         public void SetDirection(UnityEngine.Camera referenceCamera, Vector3 wandPosition, Vector3 direction)
         {
-            var distance = _pickUpDistance;
-            var rayOrigin = wandPosition;
+            var distance = 0.0f;
+            var rayOrigin = referenceCamera.transform.position; // TODO: Use wand position here
+            var currentPosition = rayOrigin;
 
-            if (Physics.Raycast(rayOrigin, direction, out var hit, _maxRaycastDistance, _sceneRaycastMask))
-                distance = Vector3.Distance(hit.point, referenceCamera.transform.position);
+            var anyRaycast = false;
+            var raycasts = 10;
 
-            var previousSubtract = 0.0f;
-            for (var i = 0; i < _integrationSteps; i++)
+            for (var i = 0; i < raycasts + 1; i++)
             {
-                _currentScale = (distance * _placedScale) / _pickUpDistance;
-                // TODO: Replace this calculation with something better
-                var currentSubtract = _currentScale.x / 2.0f;
-                distance += (previousSubtract - currentSubtract);
-                previousSubtract = currentSubtract;
+                if (i < raycasts)
+                {
+                    var hitDistance = 0.0f;
+                    if (Physics.Raycast(currentPosition, direction, out var hit, _maxRaycastDistance,
+                            _sceneRaycastMask))
+                    {
+                        hitDistance = hit.distance; // TODO: Change here when using the wand pos
+                        anyRaycast = true;
+                    }
+                    distance += hitDistance;
+
+                    var previousSubtract = 0.0f;
+                    for (var j = 0; j < _integrationSteps; j++)
+                    {
+                        _currentScale = (distance * _placedScale) / _pickUpDistance;
+                        var currentSubtract = _currentScale.x / 2.0f;
+                        distance += previousSubtract - currentSubtract;
+                        previousSubtract = currentSubtract;
+                    }
+                }
+                else
+                {
+                    if (!anyRaycast)
+                        distance = _pickUpDistance;
+                }
+
+                currentPosition =
+                    rayOrigin + distance *
+                    direction; // TODO: After wand position is used for way origin, then pythagorean theory must be used here
             }
 
             transform.localScale = _currentScale;
-            transform.position = rayOrigin + direction * distance;
+            
+            transform.position = currentPosition; 
         }
 
         private void Awake()
