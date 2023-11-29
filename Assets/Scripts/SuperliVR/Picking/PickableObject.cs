@@ -133,7 +133,7 @@ namespace SuperliVR.Picking
                 if (changedRadius)
                 {
                     var cameraDist = (radius * _pickUpDistance) / _placedScaleMultiplier;
-                    distance = CameraDistanceToWandDistance(referencePositions, cameraDist);
+                    distance = CameraDistanceToWandDistance(referencePositions, cameraDist); // TODO: Test if this works in VR
                 }
 
                 var currentSubtract = radius;
