@@ -578,7 +578,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 193
   _maxRaycastDistance: 100
-  _integrationSteps: 10
+  _integrationSteps: 20
 --- !u!1 &741472326
 GameObject:
   m_ObjectHideFlags: 0
