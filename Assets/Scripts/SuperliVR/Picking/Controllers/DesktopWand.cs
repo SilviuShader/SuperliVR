@@ -44,7 +44,7 @@ namespace SuperliVR.Picking.Controllers
                     _playerCamera.transform.forward);
 
             if (_picker.CurrentlyPicking)
-                _picker.CurrentlyPickingUpdate(_pickDown, _playerCamera.transform.forward);
+                _picker.CurrentlyPickingUpdate(_pickDown, _playerCamera.transform.position, _playerCamera.transform.forward);
         }
 
         private void LateUpdate()

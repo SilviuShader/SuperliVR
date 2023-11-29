@@ -1,8 +1,4 @@
-using System.Numerics;
-using System.Security.Cryptography;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 using Vector3 = UnityEngine.Vector3;
 
 namespace SuperliVR.Picking
@@ -21,14 +17,20 @@ namespace SuperliVR.Picking
         [SerializeField]
         private LayerMask    _sceneRaycastMask   = -1;
         [SerializeField]
-        private float        _maxRaycastDistance = 100.0f;
+        private float        _maxRaycastDistance  = 100.0f;
         [SerializeField, Min(1)]
-        private int          _integrationSteps   = 10;
+        private int          _integrationSteps    = 20;
+        [SerializeField]
+        private int          _distanceSearchSteps = 20;
+        [SerializeField]
+        private float        _maxScaleFactor      = 100.0f;
+        [SerializeField]
+        private float        _minScaleFactor      = 0.1f;
 
         private Vector3      _initialScale;
-        private Vector3      _placedScale;
-        private Vector3      _currentScale;
-
+        private float        _placedScaleMultiplier;
+        private float        _currentScaleMultiplier;
+        
         private Collider     _collider;
         private Rigidbody    _rigidbody;
         private MeshRenderer _meshRenderer;
@@ -38,12 +40,12 @@ namespace SuperliVR.Picking
 
         private float        _pickUpDistance;
 
-        public void PickUp(float pickUpDistance)
+        public void PickUp(UnityEngine.Camera referenceCamera)
         {
             _rigidbody.isKinematic = true;
             _meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            _currentScale = _placedScale;
-            _pickUpDistance = pickUpDistance;
+            _currentScaleMultiplier = _placedScaleMultiplier;
+            _pickUpDistance = Mathf.Max(_placedScaleMultiplier, PointToCameraDistance(transform.position, referenceCamera.transform.position, referenceCamera.transform.forward));
             _collider.isTrigger = true;
 
             gameObject.layer = _currentlyPickedLayer;
@@ -53,7 +55,7 @@ namespace SuperliVR.Picking
         {
             _rigidbody.isKinematic = false;
             _meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
-            _placedScale = _currentScale;
+            _placedScaleMultiplier = _currentScaleMultiplier;
             _collider.isTrigger = false;
 
             gameObject.layer = _pickableLayer;
@@ -72,27 +74,22 @@ namespace SuperliVR.Picking
 
             direction = referencePos.WandDirection;
             var rayOrigin = referencePos.WandOrigin;
-            var raycasts = 20;
 
-            _currentScale = _initialScale;
+            _currentScaleMultiplier = _placedScaleMultiplier;
 
-            _currentScale = 0.01f * Vector3.one;
-            
             var maxDist = _maxRaycastDistance;
             if (Physics.Raycast(rayOrigin, direction, out var hit, _maxRaycastDistance, _sceneRaycastMask))
-                maxDist = hit.distance; // TODO: Change this when chaning to origin of wand.
-
-            var epsilon = 0.01f;
+                maxDist = hit.distance;
 
             var minDist = 0.0f;
             var goToDist = (minDist + maxDist) * 0.5f;
 
             var currentRadius = GetRadius(referencePos, ref maxDist);
 
-            for (var i = 0; i < raycasts; i++)
+            for (var i = 0; i < _distanceSearchSteps; i++)
             {
                 if (Physics.CheckCapsule(rayOrigin + (direction * currentRadius),
-                        rayOrigin + direction * (goToDist - epsilon - currentRadius),
+                        rayOrigin + direction * (goToDist - currentRadius),
                         currentRadius * 0.5f, _sceneRaycastMask))
                 {
                     maxDist = goToDist;
@@ -106,12 +103,10 @@ namespace SuperliVR.Picking
 
                 currentRadius = GetRadius(referencePos,ref goToDist);
             }
+
+            _currentScaleMultiplier = GetRadius(referencePos, ref goToDist);
             
-            currentRadius = GetRadius(referencePos, ref goToDist);
-            
-            _currentScale = Vector3.one * currentRadius;
-            
-            transform.localScale = _currentScale;
+            transform.localScale = _initialScale * _currentScaleMultiplier;
             transform.position = rayOrigin + goToDist * direction; 
         }
 
@@ -121,11 +116,32 @@ namespace SuperliVR.Picking
             var previousSubtract = 0.0f;
             for (var j = 0; j < _integrationSteps; j++)
             {
-                radius = (WandDistanceToCameraDistance(referencePositions, distance) * _placedScale.x) / _pickUpDistance;
+                radius = (WandDistanceToCameraDistance(referencePositions, distance) * _placedScaleMultiplier) / _pickUpDistance;
+                var changedRadius = false;
+                if (radius >= _maxScaleFactor)
+                {
+                    radius = _maxScaleFactor;
+                    changedRadius = true;
+                }
+
+                if (radius < _minScaleFactor)
+                {
+                    radius = _minScaleFactor;
+                    changedRadius = true;
+                }
+
+                if (changedRadius)
+                {
+                    var cameraDist = (radius * _pickUpDistance) / _placedScaleMultiplier;
+                    distance = CameraDistanceToWandDistance(referencePositions, cameraDist);
+                }
+
                 var currentSubtract = radius;
                 distance += previousSubtract - currentSubtract;
                 previousSubtract = currentSubtract;
             }
+
+            Debug.Log(radius);
 
             return radius;
         }
@@ -135,8 +151,21 @@ namespace SuperliVR.Picking
             float distance)
         {
             var worldPoint = referencePositions.WandOrigin + referencePositions.WandDirection * distance;
-            var cameraToPoint = worldPoint - referencePositions.CameraOrigin;
-            return Vector3.Dot(cameraToPoint, referencePositions.CameraForward);
+            return PointToCameraDistance(worldPoint, referencePositions.CameraOrigin, referencePositions.CameraForward);
+        }
+
+        static float CameraDistanceToWandDistance(ReferencePositionsInfo referencePositions,
+            float distance)
+        {
+            var worldPoint = referencePositions.CameraOrigin + referencePositions.CameraForward * distance;
+            var pointToWand = worldPoint - referencePositions.WandOrigin;
+            return Mathf.Abs(Vector3.Dot(pointToWand, referencePositions.WandDirection));
+        }
+
+        static float PointToCameraDistance(Vector3 point, Vector3 cameraPosition, Vector3 cameraForward)
+        {
+            var cameraToPoint = point - cameraPosition;
+            return Mathf.Abs(Vector3.Dot(cameraToPoint, cameraForward));
         }
 
         private void Awake()
@@ -150,7 +179,8 @@ namespace SuperliVR.Picking
 
             _sceneRaycastMask &= ~(1 << _currentlyPickedLayer);
 
-            _currentScale = _placedScale = _initialScale = transform.localScale;
+            _initialScale = transform.localScale;
+            _placedScaleMultiplier = _currentScaleMultiplier = 1.0f;
             gameObject.layer = _pickableLayer;
         }
     }

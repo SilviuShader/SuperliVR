@@ -15,10 +15,7 @@ namespace SuperliVR.Picking
                 _pickedObject = value;
 
                 if (_pickedObject != null)
-                    _pickedObject.PickUp(
-                        Vector3.Distance(
-                            _referenceCamera.transform.position, 
-                            _pickedObject.transform.position));
+                    _pickedObject.PickUp(_referenceCamera);
             }
         }
 
@@ -27,6 +24,8 @@ namespace SuperliVR.Picking
             get => _direction;
             set => _direction = value.normalized;
         }
+
+        public Vector3             PickOrigin { get; set; }
 
         public  bool               CurrentlyPicking  => PickedObject != null;
                                    
@@ -54,10 +53,11 @@ namespace SuperliVR.Picking
                     PickedObject = pickedObject;
             }
 
+            PickOrigin = raycastOrigin;
             Direction = raycastDirection;
         }
 
-        public void CurrentlyPickingUpdate(bool pickDown, Vector3 pickDirection)
+        public void CurrentlyPickingUpdate(bool pickDown, Vector3 pickOrigin, Vector3 pickDirection)
         {
             if (!pickDown)
             {
@@ -65,6 +65,7 @@ namespace SuperliVR.Picking
                 return;
             }
 
+            PickOrigin = pickOrigin;
             Direction = pickDirection;
         }
 
@@ -73,8 +74,7 @@ namespace SuperliVR.Picking
             if (PickedObject == null)
                 return;
             
-            PickedObject.SetDirection(_referenceCamera, transform.position, Direction);
-            //PickedObject.SetPosition(transform.position + Direction * _distanceFromWand);
+            PickedObject.SetDirection(_referenceCamera, PickOrigin, Direction);
         }
     }
 }

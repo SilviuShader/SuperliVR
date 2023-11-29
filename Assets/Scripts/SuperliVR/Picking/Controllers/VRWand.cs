@@ -30,6 +30,7 @@ namespace SuperliVR.Picking.Controllers
             
             if (_picker.CurrentlyPicking)
                 _picker.CurrentlyPickingUpdate(_pickObjectAction[SteamVR_Input_Sources.RightHand].state,
+                    transform.position,
                     ForwardDirection);
         }
     }
