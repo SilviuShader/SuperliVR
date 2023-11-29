@@ -55,67 +55,43 @@ namespace SuperliVR.Picking
         {
             direction = referenceCamera.transform.forward;
             var rayOrigin = referenceCamera.transform.position; // TODO: Use wand position here
-            var raycasts = 10;
+            var raycasts = 20;
 
             _currentScale = _initialScale;
 
             _currentScale = 0.01f * Vector3.one;
-
-            string message = "";
-
-            /*
-            if(Physics.CheckCapsule())
-
-            for (var i = 0; i < raycasts; i++)
-            {
-                message += _currentScale.x + " ";
-                if (Physics.CheckCapsule(rayOrigin, rayOrigin + direction * _maxRaycastDistance))
-                {
-                    message += "(" + hit.collider.name + ")";
-                    distance = hit.distance;
-                }
-                else
-                {
-                    message += "(pula)";
-                }
-
-                _currentScale = (distance * _placedScale) / _pickUpDistance;
-            }
-
-            Debug.Log(message);
-
-            */
-
+            
             var maxDist = _maxRaycastDistance;
             if (Physics.Raycast(rayOrigin, direction, out var hit, _maxRaycastDistance, _sceneRaycastMask))
                 maxDist = hit.distance; // TODO: Change this when chaning to origin of wand.
 
-            var smallRadius = 0.0f;
-            var bigRadius = GetRadius(ref maxDist);
-
-            Debug.Log(smallRadius + " " + bigRadius);
-
             var epsilon = 0.01f;
 
-            var currentRadius = (smallRadius + bigRadius) * 0.5f;
-            var goToDist = maxDist * 0.9f;
+            var minDist = 0.0f;
+            var goToDist = (minDist + maxDist) * 0.5f;
+
+            var currentRadius = GetRadius(ref maxDist);
 
             for (var i = 0; i < raycasts; i++)
             {
-                if (Physics.CheckCapsule(rayOrigin + (direction * currentRadius), rayOrigin + direction * (goToDist - epsilon - currentRadius),
+                if (Physics.CheckCapsule(rayOrigin + (direction * currentRadius),
+                        rayOrigin + direction * (goToDist - epsilon - currentRadius),
                         currentRadius * 0.5f, _sceneRaycastMask))
                 {
-                    bigRadius = currentRadius;
-                    currentRadius = (bigRadius + smallRadius) / 2.0f;
+                    maxDist = goToDist;
+                    goToDist = (maxDist + minDist) * 0.5f;
                 }
                 else
                 {
-                    smallRadius = currentRadius;
-                    currentRadius = (bigRadius + smallRadius) / 2.0f;
+                    minDist = goToDist;
+                    goToDist = (maxDist + minDist) * 0.5f;
                 }
-            }
 
-            goToDist = (currentRadius * _pickUpDistance) / _placedScale.x;
+                currentRadius = GetRadius(ref goToDist);
+            }
+            
+            currentRadius = GetRadius(ref goToDist);
+            
             _currentScale = Vector3.one * currentRadius;
             
             transform.localScale = _currentScale;
