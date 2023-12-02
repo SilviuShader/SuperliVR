@@ -202,6 +202,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _movementSpeed: 10
   _maxAcceleration: 100
+  _maxJumpHeight: 2
   _playerInputSpace: {fileID: 741472327}
 --- !u!114 &54886564
 MonoBehaviour:
@@ -293,6 +294,23 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 7f5640e3-8619-4d4e-ad6b-6b6333386054
     m_ActionName: Ground Movement/PickObject[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 54886566}
+        m_TargetAssemblyTypeName: SuperliVR.Movement.Controllers.DesktopPlayerController,
+          Assembly-CSharp
+        m_MethodName: Jump
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: b5ca7783-680f-4440-9c56-16fcee1e3e1c
+    m_ActionName: Ground Movement/Jump[/Keyboard/space]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Ground Movement
@@ -581,6 +599,7 @@ MonoBehaviour:
   _integrationSteps: 20
   _distanceSearchSteps: 20
   _maxScaleFactor: 100
+  _minScaleFactor: 0.1
 --- !u!1 &741472326
 GameObject:
   m_ObjectHideFlags: 0

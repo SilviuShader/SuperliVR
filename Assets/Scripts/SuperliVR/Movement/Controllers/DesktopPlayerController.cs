@@ -9,9 +9,13 @@ namespace SuperliVR.Movement.Controllers
     {
         private PlayerInteractions _playerInteractions;
         private Vector2            _movement;
+        private bool               _jumpDown;
 
         public void Move(InputAction.CallbackContext context) =>
             _movement = context.ReadValue<Vector2>();
+
+        public void Jump(InputAction.CallbackContext context) =>
+            _jumpDown |= context.ReadValueAsButton();
 
         private void Awake() =>
             _playerInteractions = GetComponent<PlayerInteractions>();
@@ -22,6 +26,12 @@ namespace SuperliVR.Movement.Controllers
                 return;
 
             _playerInteractions.Move(_movement);
+
+            if (_jumpDown)
+            {
+                _playerInteractions.Jump();
+                _jumpDown = false;
+            }
         }
     }
 }
