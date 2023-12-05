@@ -30,6 +30,7 @@ namespace SuperliVR.Picking
         private Vector3      _initialScale;
         private float        _placedScaleMultiplier;
         private float        _currentScaleMultiplier;
+        private Vector3      _previousPickUpDirection;
         
         private Collider     _collider;
         private Rigidbody    _rigidbody;
@@ -58,9 +59,10 @@ namespace SuperliVR.Picking
             _rigidbody.isKinematic = true;
             _meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             _currentScaleMultiplier = _placedScaleMultiplier;
-            _pickUpDistance = Mathf.Max(_placedScaleMultiplier, PointToCameraDistance(transform.position, referenceCamera.transform.position, referenceCamera.transform.forward));
+            _previousPickUpDirection = ProjectXZPlane(referenceCamera.transform.forward);
+            _pickUpDistance = Mathf.Max(_placedScaleMultiplier, PointToCameraDistance(transform.position, referenceCamera.transform.position, _previousPickUpDirection));
             _collider.isTrigger = true;
-
+            
             gameObject.layer = _currentlyPickedLayer;
         }
 
@@ -122,7 +124,14 @@ namespace SuperliVR.Picking
             _currentScaleMultiplier = GetScaleMultiplier(referencePos, ref goToDist);
             
             transform.localScale = _initialScale * _currentScaleMultiplier;
-            transform.position = rayOrigin + goToDist * direction; 
+            transform.position = rayOrigin + goToDist * direction;
+
+            var currentDirection = ProjectXZPlane(direction);
+
+            var deltaRotation = Quaternion.FromToRotation(_previousPickUpDirection, currentDirection);
+
+            transform.rotation = deltaRotation * transform.rotation;
+            _previousPickUpDirection = currentDirection;
         }
 
         private float GetScaleMultiplier(ReferencePositionsInfo referencePositions, ref float distance)
@@ -196,6 +205,8 @@ namespace SuperliVR.Picking
             _placedScaleMultiplier = _currentScaleMultiplier = 1.0f;
             gameObject.layer = _pickableLayer;
             _initialBoundingRadius = ObjectBoundingRadius;
+
+            _previousPickUpDirection = Vector3.forward;
         }
 
         private float MaxComponent(Vector3 vec)
@@ -218,6 +229,16 @@ namespace SuperliVR.Picking
                 return vec.y;
 
             return vec.z;
+        }
+
+        private Vector3 ProjectXZPlane(Vector3 vec)
+        {
+            vec.y = 0.0f;
+            var length = vec.magnitude;
+            if (length > Mathf.Epsilon)
+                return vec / length;
+            
+            return Vector3.forward;
         }
     }
 }
