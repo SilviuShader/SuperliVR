@@ -39,6 +39,19 @@ namespace SuperliVR.Picking
         private LayerMask    _currentlyPickedLayer;
 
         private float        _pickUpDistance;
+        private float        _initialBoundingRadius;
+
+        private float        ObjectBoundingRadius
+        {
+            get
+            {
+                var worldBounds = _collider.bounds;
+                var worldExtents = worldBounds.extents;
+                var objectExtent = MaxComponent(worldExtents) / MinComponent(transform.localScale);
+
+                return objectExtent;
+            }
+        }
 
         public void PickUp(UnityEngine.Camera referenceCamera)
         {
@@ -84,13 +97,15 @@ namespace SuperliVR.Picking
             var minDist = 0.0f;
             var goToDist = (minDist + maxDist) * 0.5f;
 
-            var currentRadius = GetRadius(referencePos, ref maxDist);
+            var currentScaleMultiplier = GetScaleMultiplier(referencePos, ref maxDist);
 
             for (var i = 0; i < _distanceSearchSteps; i++)
             {
-                if (Physics.CheckCapsule(rayOrigin + (direction * currentRadius),
-                        rayOrigin + direction * (goToDist - currentRadius),
-                        currentRadius * 0.5f, _sceneRaycastMask))
+                var realSize = currentScaleMultiplier * _initialBoundingRadius * MaxComponent(_initialScale);
+                
+                if (Physics.CheckCapsule(rayOrigin + (direction * realSize * 2.0f),
+                        rayOrigin + direction * (goToDist - realSize * 2.0f),
+                        realSize, _sceneRaycastMask))
                 {
                     maxDist = goToDist;
                     goToDist = (maxDist + minDist) * 0.5f;
@@ -101,49 +116,47 @@ namespace SuperliVR.Picking
                     goToDist = (maxDist + minDist) * 0.5f;
                 }
 
-                currentRadius = GetRadius(referencePos,ref goToDist);
+                currentScaleMultiplier = GetScaleMultiplier(referencePos,ref goToDist);
             }
 
-            _currentScaleMultiplier = GetRadius(referencePos, ref goToDist);
+            _currentScaleMultiplier = GetScaleMultiplier(referencePos, ref goToDist);
             
             transform.localScale = _initialScale * _currentScaleMultiplier;
             transform.position = rayOrigin + goToDist * direction; 
         }
 
-        private float GetRadius(ReferencePositionsInfo referencePositions, ref float distance)
+        private float GetScaleMultiplier(ReferencePositionsInfo referencePositions, ref float distance)
         {
-            var radius = 0.0f;
+            var scaleMultiplier = 0.0f;
             var previousSubtract = 0.0f;
             for (var j = 0; j < _integrationSteps; j++)
             {
-                radius = (WandDistanceToCameraDistance(referencePositions, distance) * _placedScaleMultiplier) / _pickUpDistance;
+                scaleMultiplier = (WandDistanceToCameraDistance(referencePositions, distance) * _placedScaleMultiplier) / _pickUpDistance;
                 var changedRadius = false;
-                if (radius >= _maxScaleFactor)
+                if (scaleMultiplier >= _maxScaleFactor)
                 {
-                    radius = _maxScaleFactor;
+                    scaleMultiplier = _maxScaleFactor;
                     changedRadius = true;
                 }
 
-                if (radius < _minScaleFactor)
+                if (scaleMultiplier < _minScaleFactor)
                 {
-                    radius = _minScaleFactor;
+                    scaleMultiplier = _minScaleFactor;
                     changedRadius = true;
                 }
 
                 if (changedRadius)
                 {
-                    var cameraDist = (radius * _pickUpDistance) / _placedScaleMultiplier;
-                    distance = CameraDistanceToWandDistance(referencePositions, cameraDist); // TODO: Test if this works in VR
+                    var cameraDist = (scaleMultiplier * _pickUpDistance) / _placedScaleMultiplier;
+                    distance = CameraDistanceToWandDistance(referencePositions, cameraDist);
                 }
 
-                var currentSubtract = radius;
+                var currentSubtract = scaleMultiplier * MaxComponent(_initialScale) * _initialBoundingRadius * 2.0f;
                 distance += previousSubtract - currentSubtract;
                 previousSubtract = currentSubtract;
             }
-
-            //Debug.Log(radius);
-
-            return radius;
+            
+            return scaleMultiplier;
         }
 
         static float WandDistanceToCameraDistance(
@@ -182,6 +195,29 @@ namespace SuperliVR.Picking
             _initialScale = transform.localScale;
             _placedScaleMultiplier = _currentScaleMultiplier = 1.0f;
             gameObject.layer = _pickableLayer;
+            _initialBoundingRadius = ObjectBoundingRadius;
+        }
+
+        private float MaxComponent(Vector3 vec)
+        {
+            if (vec.x > vec.y && vec.x > vec.z)
+                return vec.x;
+
+            if (vec.y > vec.x && vec.y > vec.z)
+                return vec.y;
+
+            return vec.z;
+        }
+
+        private float MinComponent(Vector3 vec)
+        {
+            if (vec.x < vec.y && vec.x < vec.z)
+                return vec.x;
+
+            if (vec.y < vec.x && vec.y < vec.z)
+                return vec.y;
+
+            return vec.z;
         }
     }
 }

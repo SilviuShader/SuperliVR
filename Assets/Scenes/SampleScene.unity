@@ -221,6 +221,9 @@ MonoBehaviour:
   _joystickMovementAction:
     actionPath: /actions/character_controller/in/JoystickMovement
     needsReinit: 0
+  _jumpAction:
+    actionPath: /actions/character_controller/in/Jump
+    needsReinit: 0
 --- !u!114 &54886565
 MonoBehaviour:
   m_ObjectHideFlags: 0
