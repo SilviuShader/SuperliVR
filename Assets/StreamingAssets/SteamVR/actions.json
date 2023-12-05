@@ -7,6 +7,10 @@
     {
       "name": "/actions/character_controller/in/PickObject",
       "type": "boolean"
+    },
+    {
+      "name": "/actions/character_controller/in/Jump",
+      "type": "boolean"
     }
   ],
   "action_sets": [
@@ -73,7 +77,8 @@
     {
       "language_tag": "en_US",
       "/actions/character_controller/in/JoystickMovement": "Joystick Movement",
-      "/actions/character_controller/in/PickObject": "Pick Object"
+      "/actions/character_controller/in/PickObject": "Pick Object",
+      "/actions/character_controller/in/Jump": "Jump"
     }
   ]
 }

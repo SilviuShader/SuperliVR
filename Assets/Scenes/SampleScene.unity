@@ -202,9 +202,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _movementSpeed: 10
   _maxAcceleration: 100
-  _maxAirAcceleration: 1
-  _maxJumpHeight: 1
-  _maxAirJumps: 1
+  _maxAirAcceleration: 10
+  _maxJumpHeight: 3
+  _maxAirJumps: 0
   _playerInputSpace: {fileID: 741472327}
 --- !u!114 &54886564
 MonoBehaviour:

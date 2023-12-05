@@ -32,5 +32,13 @@ namespace Valve.VR
                 return SteamVR_Actions.character_controller_PickObject;
             }
         }
+        
+        public virtual SteamVR_Action_Boolean Jump
+        {
+            get
+            {
+                return SteamVR_Actions.character_controller_Jump;
+            }
+        }
     }
 }

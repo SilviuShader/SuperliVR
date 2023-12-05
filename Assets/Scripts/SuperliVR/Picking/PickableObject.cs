@@ -141,7 +141,7 @@ namespace SuperliVR.Picking
                 previousSubtract = currentSubtract;
             }
 
-            Debug.Log(radius);
+            //Debug.Log(radius);
 
             return radius;
         }
