@@ -14,6 +14,9 @@ namespace SuperliVR.Picking
             public Vector3 WandDirection;
         }
 
+        public  float        CurrentScaleMultiplier => _currentScaleMultiplier;
+        public  float        PlacedScaleMultiplier => _placedScaleMultiplier;
+
         [SerializeField]
         private LayerMask    _sceneRaycastMask   = -1;
         [SerializeField]
