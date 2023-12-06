@@ -2431,7 +2431,7 @@ ParticleSystem:
         m_RotationOrder: 4
     m_Range: {x: 0, y: 1}
   ForceModule:
-    enabled: 1
+    enabled: 0
     x:
       serializedVersion: 2
       minMaxState: 0
@@ -2655,7 +2655,7 @@ ParticleSystem:
       m_Bits: 4294967295
     influenceList: []
   ClampVelocityModule:
-    enabled: 1
+    enabled: 0
     x:
       serializedVersion: 2
       minMaxState: 0
@@ -2927,11 +2927,11 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
   NoiseModule:
-    enabled: 0
+    enabled: 1
     strength:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.05
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -3088,7 +3088,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     separateAxes: 0
-    frequency: 0.5
+    frequency: 20
     damping: 1
     octaves: 1
     octaveMultiplier: 0.5
@@ -3097,7 +3097,7 @@ ParticleSystem:
     scrollSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 0.05
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -3826,7 +3826,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_Mode: 0
-        m_ColorSpace: -1
+        m_ColorSpace: 0
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
       minGradient:
@@ -5164,9 +5164,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6673699716739665834}
   - component: {fileID: 2568658104085820916}
-  - component: {fileID: 157121226279117532}
   - component: {fileID: 3532699103993094623}
   - component: {fileID: 4946001997793016918}
+  - component: {fileID: 157121226279117532}
   - component: {fileID: 3209144627997341662}
   m_Layer: 8
   m_Name: Wand Parent
@@ -5213,27 +5213,6 @@ MonoBehaviour:
   m_TrackingType: 0
   m_UpdateType: 0
   m_UseRelativeTransform: 0
---- !u!114 &157121226279117532
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1073690327345401385}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c99acd3c2846dc6488cbda888a2a4041, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MaxPickingDist: 300
-  RegularSceneLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  _distanceFromWand: 2
-  _layerMask:
-    serializedVersion: 2
-    m_Bits: 64
-  _referenceCamera: {fileID: 5521187806871239431}
 --- !u!114 &3532699103993094623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5267,6 +5246,27 @@ MonoBehaviour:
   _offset: {x: -0.05, y: -0.02}
   _defaultWandRotation: {x: -75, y: -25, z: 50}
   _wandRotationSpeed: 90
+--- !u!114 &157121226279117532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1073690327345401385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c99acd3c2846dc6488cbda888a2a4041, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxPickingDist: 300
+  RegularSceneLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  _distanceFromWand: 2
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  _referenceCamera: {fileID: 5521187806871239431}
 --- !u!114 &3209144627997341662
 MonoBehaviour:
   m_ObjectHideFlags: 0

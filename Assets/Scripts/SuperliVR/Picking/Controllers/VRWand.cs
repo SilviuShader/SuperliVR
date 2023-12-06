@@ -19,7 +19,7 @@ namespace SuperliVR.Picking.Controllers
         private void Awake() =>
             _picker = GetComponent<WandPicker>();
 
-        private void Update()
+        private void LateUpdate()
         {
             if (!VRHelper.Instance.VRMode)
                 return;

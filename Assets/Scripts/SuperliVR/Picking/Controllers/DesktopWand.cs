@@ -33,7 +33,7 @@ namespace SuperliVR.Picking.Controllers
         private void Awake() =>
             _picker = GetComponent<WandPicker>();
 
-        private void Update()
+        private void LateUpdate()
         {
             if (VRHelper.Instance.VRMode)
                 return;
@@ -45,12 +45,6 @@ namespace SuperliVR.Picking.Controllers
 
             if (_picker.CurrentlyPicking)
                 _picker.CurrentlyPickingUpdate(_pickDown, _playerCamera.transform.position, _playerCamera.transform.forward);
-        }
-
-        private void LateUpdate()
-        {
-            if (VRHelper.Instance.VRMode)
-                return;
 
             var cameraTransform = _playerCamera.transform;
             var baseWorldPos = _playerCamera.ViewportToWorldPoint(new Vector3(1.0f, 0.0f, _distanceFromCamera));
