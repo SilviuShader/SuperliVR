@@ -28,11 +28,11 @@ namespace SuperliVR.Picking
         public Vector3             PickOrigin { get; set; }
 
         public  bool               CurrentlyPicking  => PickedObject != null;
-                                   
+
+        public float               MaxPickingDist    = 300.0f;
+
         [SerializeField]           
         private float              _distanceFromWand = 2.0f;
-        [SerializeField]           
-        private float              _maxPickingDist   = 10.0f;
         [SerializeField]           
         private LayerMask          _layerMask        = -1;
         [SerializeField]
@@ -46,7 +46,7 @@ namespace SuperliVR.Picking
             if (!pickDown)
                 return;
 
-            if (Physics.Raycast(raycastOrigin, raycastDirection, out var hit, _maxPickingDist, _layerMask))
+            if (Physics.Raycast(raycastOrigin, raycastDirection, out var hit, MaxPickingDist, _layerMask))
             {
                 var pickedObject = hit.transform.GetComponent<PickableObject>();
                 if (pickedObject != null)

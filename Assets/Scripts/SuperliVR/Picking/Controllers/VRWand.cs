@@ -7,10 +7,14 @@ namespace SuperliVR.Picking.Controllers
     [RequireComponent(typeof(WandPicker))]
     public class VRWand : MonoBehaviour
     {
-        private Vector3                ForwardDirection => transform.forward;
+        private Vector3                ForwardDirection    => transform.forward;
         // TODO: Wrap this..
         [SerializeField]
-        private SteamVR_Action_Boolean _pickObjectAction = SteamVR_Input.GetBooleanAction("PickObject");
+        private SteamVR_Action_Boolean _pickObjectAction   = SteamVR_Input.GetBooleanAction("PickObject");
+        [SerializeField]
+        private Transform              _directionIndicator;
+        [SerializeField]
+        private LayerMask              _regularSceneLayers = -1;
 
         private WandPicker             _picker;
 
@@ -22,16 +26,46 @@ namespace SuperliVR.Picking.Controllers
             if (!VRHelper.Instance.VRMode)
                 return;
 
+            var pickPressed = _pickObjectAction[SteamVR_Input_Sources.RightHand].state;
+
             if (!_picker.CurrentlyPicking)
                 _picker.CheckPick(
-                    _pickObjectAction[SteamVR_Input_Sources.RightHand].state, 
+                    pickPressed, 
                     transform.position, 
                     ForwardDirection);
             
             if (_picker.CurrentlyPicking)
-                _picker.CurrentlyPickingUpdate(_pickObjectAction[SteamVR_Input_Sources.RightHand].state,
+                _picker.CurrentlyPickingUpdate(
+                    pickPressed,
                     transform.position,
                     ForwardDirection);
+
+            if (pickPressed && !_picker.CurrentlyPicking)
+                ShowPickDirection();
+            else
+                HidePickDirection();
+        }
+
+        private void ShowPickDirection()
+        {
+            _directionIndicator.gameObject.SetActive(true);
+
+            var targetScale = _picker.MaxPickingDist;
+
+            if (Physics.Raycast(transform.position, ForwardDirection, out var hit, _picker.MaxPickingDist, _regularSceneLayers))
+                targetScale = hit.distance;
+
+            targetScale *= 0.5f;
+
+            _directionIndicator.localScale = new Vector3(_directionIndicator.localScale.x, targetScale,
+                _directionIndicator.localScale.z);
+
+            _directionIndicator.localPosition = Vector3.forward * targetScale;
+        }
+
+        private void HidePickDirection()
+        {
+            _directionIndicator.gameObject.SetActive(false);
         }
     }
 }
