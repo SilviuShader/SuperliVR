@@ -102,12 +102,12 @@ namespace SuperliVR.Picking
             var minDist = 0.0f;
             var goToDist = (minDist + maxDist) * 0.5f;
 
-            var currentScaleMultiplier = GetScaleMultiplier(referencePos, ref maxDist);
+            var currentScaleMultiplier = GetScaleMultiplier(referencePos, ref goToDist);
 
             for (var i = 0; i < _distanceSearchSteps; i++)
             {
                 var realSize = currentScaleMultiplier * _initialBoundingRadius * MaxComponent(_initialScale);
-                
+
                 if (Physics.CheckCapsule(rayOrigin + (direction * realSize * 2.0f),
                         rayOrigin + direction * (goToDist - realSize * 2.0f),
                         realSize, _sceneRaycastMask))
@@ -121,7 +121,7 @@ namespace SuperliVR.Picking
                     goToDist = (maxDist + minDist) * 0.5f;
                 }
 
-                currentScaleMultiplier = GetScaleMultiplier(referencePos,ref goToDist);
+                currentScaleMultiplier = GetScaleMultiplier(referencePos, ref goToDist);
             }
 
             _currentScaleMultiplier = GetScaleMultiplier(referencePos, ref goToDist);
@@ -163,7 +163,7 @@ namespace SuperliVR.Picking
                     distance = CameraDistanceToWandDistance(referencePositions, cameraDist);
                 }
 
-                var currentSubtract = scaleMultiplier * MaxComponent(_initialScale) * _initialBoundingRadius * 2.0f;
+                var currentSubtract = scaleMultiplier * MaxComponent(_initialScale) * _initialBoundingRadius * 1.01f;
                 distance += previousSubtract - currentSubtract;
                 previousSubtract = currentSubtract;
             }
