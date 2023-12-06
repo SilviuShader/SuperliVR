@@ -91,20 +91,17 @@ namespace SuperliVR.Movement
                 _jumpPhase = 0;
         }        
 
-        private void OnCollisionEnter(Collision collision)
-        {
+        private void OnCollisionEnter(Collision collision) =>
             EvaluateCollision(collision);
-        }
+        
 
-        private void OnCollisionExit(Collision collision)
-        {
+        private void OnCollisionExit(Collision collision) =>
             EvaluateCollision(collision);
-        }
+        
 
-        private void OnCollisionStay(Collision collision)
-        {
+        private void OnCollisionStay(Collision collision) =>
             EvaluateCollision(collision);
-        }
+        
 
         private void EvaluateCollision(Collision collision)
         {
