@@ -5226,9 +5226,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MaxPickingDist: 300
-  RegulatSceneLayers:
+  RegularSceneLayers:
     serializedVersion: 2
-    m_Bits: 83
+    m_Bits: 4294967295
   _distanceFromWand: 2
   _layerMask:
     serializedVersion: 2
@@ -5757,8 +5757,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _defaultEyeHeight: 2
   _defaultRotationSpeed: 50
+  _vrRotationSpeed: 90
   _minVerticalAngle: -89
   _maxVerticalAngle: 89
+  _rootParent: {fileID: 1578936541302482920}
+  _joystickMovementAction:
+    actionPath: /actions/character_controller/in/JoystickMovement
+    needsReinit: 0
 --- !u!114 &7094168504468475105
 MonoBehaviour:
   m_ObjectHideFlags: 0

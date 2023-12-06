@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SpatialTracking;
 using Utils;
+using Valve.VR;
 
 namespace SuperliVR.Camera
 {
@@ -9,17 +10,25 @@ namespace SuperliVR.Camera
     public class CrossInteractionCamera : MonoBehaviour
     {
         [SerializeField]
-        private float             _defaultEyeHeight     = 2.0f;
+        private float                  _defaultEyeHeight       = 2.0f;
+        [SerializeField, Range(1f, 360f)]                      
+        private float                  _defaultRotationSpeed   = 50.0f;
         [SerializeField, Range(1f, 360f)]
-        private float             _defaultRotationSpeed = 50.0f;
-        [SerializeField, Range(-89f, 89f)]
-        private float             _minVerticalAngle     = -89f, 
-                                  _maxVerticalAngle     = 89f;
+        private float                  _vrRotationSpeed        = 50.0f;
+        [SerializeField, Range(-89f, 89f)]                     
+        private float                  _minVerticalAngle       = -89f, 
+                                       _maxVerticalAngle       = 89f;
+        [SerializeField]
+        private Transform              _rootParent             = default;
 
-        private TrackedPoseDriver _trackedPoseDriver;
+        // TODO: Wrap this
+        [SerializeField]
+        private SteamVR_Action_Vector2 _joystickMovementAction = SteamVR_Input.GetVector2Action("JoystickMovement");
 
-        private Vector2           _orbitAngles          = Vector2.zero;
-        private Vector2           _orbitInput           = Vector2.zero;
+        private TrackedPoseDriver      _trackedPoseDriver;
+                                       
+        private Vector2                _orbitAngles            = Vector2.zero;
+        private Vector2                _orbitInput             = Vector2.zero;
 
         public void Orbit(InputAction.CallbackContext context)
         {
@@ -45,6 +54,8 @@ namespace SuperliVR.Camera
         {
             if (!VRHelper.Instance.VRMode)
                 RegularCameraUpdate();
+            else
+                VRCameraUpdate();
         }
 
         private void RegularCameraUpdate()
@@ -86,6 +97,12 @@ namespace SuperliVR.Camera
                 _orbitAngles.y += 360f;
             else if (_orbitAngles.y >= 360.0f)
                 _orbitAngles.y -= 360.0f;
+        }
+
+        private void VRCameraUpdate()
+        {
+            var axis = _joystickMovementAction[SteamVR_Input_Sources.RightHand].axis;
+            _rootParent.Rotate(Vector3.up, axis.x * _vrRotationSpeed * Time.deltaTime);
         }
     }
 }
