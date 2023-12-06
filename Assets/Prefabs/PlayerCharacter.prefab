@@ -217,7 +217,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 79250752501322574}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 067739d50854b484fbf6aa0e8aaba7a0, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -5761,6 +5761,7 @@ MonoBehaviour:
   _minVerticalAngle: -89
   _maxVerticalAngle: 89
   _rootParent: {fileID: 1578936541302482920}
+  _aim: {fileID: 0}
   _joystickMovementAction:
     actionPath: /actions/character_controller/in/JoystickMovement
     needsReinit: 0
