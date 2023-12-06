@@ -1,3 +1,4 @@
+using Microsoft.Unity.VisualStudio.Editor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SpatialTracking;
@@ -20,6 +21,8 @@ namespace SuperliVR.Camera
                                        _maxVerticalAngle       = 89f;
         [SerializeField]
         private Transform              _rootParent             = default;
+        [SerializeField]
+        private Transform              _aim                    = null;
 
         // TODO: Wrap this
         [SerializeField]
@@ -75,6 +78,7 @@ namespace SuperliVR.Camera
             }
             
             transform.SetLocalPositionAndRotation(Vector2.up * _defaultEyeHeight, lookRotation);
+            _aim.gameObject.SetActive(true);
         }
 
         private bool ManualRotation()
@@ -103,6 +107,7 @@ namespace SuperliVR.Camera
         {
             var axis = _joystickMovementAction[SteamVR_Input_Sources.RightHand].axis;
             _rootParent.Rotate(Vector3.up, axis.x * _vrRotationSpeed * Time.deltaTime);
+            _aim.gameObject.SetActive(false);
         }
     }
 }
