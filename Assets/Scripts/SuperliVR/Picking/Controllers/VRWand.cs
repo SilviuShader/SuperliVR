@@ -13,8 +13,6 @@ namespace SuperliVR.Picking.Controllers
         private SteamVR_Action_Boolean _pickObjectAction   = SteamVR_Input.GetBooleanAction("PickObject");
         [SerializeField]
         private Transform              _directionIndicator;
-        [SerializeField]
-        private LayerMask              _regularSceneLayers = -1;
 
         private WandPicker             _picker;
 
@@ -52,7 +50,7 @@ namespace SuperliVR.Picking.Controllers
 
             var targetScale = _picker.MaxPickingDist;
 
-            if (Physics.Raycast(transform.position, ForwardDirection, out var hit, _picker.MaxPickingDist, _regularSceneLayers))
+            if (Physics.Raycast(transform.position, ForwardDirection, out var hit, _picker.MaxPickingDist, _picker.RegularSceneLayers))
                 targetScale = hit.distance;
 
             targetScale *= 0.5f;

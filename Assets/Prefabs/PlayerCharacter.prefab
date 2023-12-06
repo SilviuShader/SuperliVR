@@ -5226,6 +5226,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MaxPickingDist: 300
+  RegulatSceneLayers:
+    serializedVersion: 2
+    m_Bits: 83
   _distanceFromWand: 2
   _layerMask:
     serializedVersion: 2
@@ -5247,9 +5250,6 @@ MonoBehaviour:
     actionPath: /actions/character_controller/in/PickObject
     needsReinit: 0
   _directionIndicator: {fileID: 4082037211884497459}
-  _regularSceneLayers:
-    serializedVersion: 2
-    m_Bits: 211
 --- !u!114 &4946001997793016918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5633,7 +5633,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 6553c0e282af50a44bd2fe64198fe17d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

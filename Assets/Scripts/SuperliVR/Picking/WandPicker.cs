@@ -27,30 +27,38 @@ namespace SuperliVR.Picking
 
         public Vector3             PickOrigin { get; set; }
 
-        public  bool               CurrentlyPicking  => PickedObject != null;
+        public  bool               CurrentlyPicking   => PickedObject != null;
 
-        public float               MaxPickingDist    = 300.0f;
+        public  float              MaxPickingDist     = 300.0f;
+
+        public  LayerMask          RegularSceneLayers = -1;
 
         [SerializeField]           
-        private float              _distanceFromWand = 2.0f;
+        private float              _distanceFromWand  = 2.0f;
         [SerializeField]           
-        private LayerMask          _layerMask        = -1;
-        [SerializeField]
-        private UnityEngine.Camera _referenceCamera  = null;
-
-        private PickableObject     _pickedObject;
-        private Vector3            _direction        = Vector3.forward;
+        private LayerMask          _layerMask         = -1;
+        [SerializeField]                              
+        private UnityEngine.Camera _referenceCamera   = null;
+                                                      
+        private PickableObject     _pickedObject;     
+        private Vector3            _direction         = Vector3.forward;
 
         public void CheckPick(bool pickDown, Vector3 raycastOrigin, Vector3 raycastDirection)
         {
             if (!pickDown)
                 return;
 
-            if (Physics.Raycast(raycastOrigin, raycastDirection, out var hit, MaxPickingDist, _layerMask))
+            if (Physics.Raycast(raycastOrigin, raycastDirection, out var regularHit, MaxPickingDist, RegularSceneLayers))
             {
-                var pickedObject = hit.transform.GetComponent<PickableObject>();
-                if (pickedObject != null)
-                    PickedObject = pickedObject;
+                if (Physics.Raycast(raycastOrigin, raycastDirection, out var hit, MaxPickingDist, _layerMask))
+                {
+                    if (hit.distance < regularHit.distance + Mathf.Epsilon || regularHit.transform == hit.transform)
+                    {
+                        var pickedObject = hit.transform.GetComponent<PickableObject>();
+                        if (pickedObject != null)
+                            PickedObject = pickedObject;
+                    }
+                }
             }
 
             PickOrigin = raycastOrigin;
