@@ -16,10 +16,27 @@ namespace SuperliVR.Portals
         
         private UnityEngine.Camera _renderCamera;
         private RenderTexture      _renderTexture;
-        private int                _horizontalResolution;
+        private PortalBehaviour    _portalBehaviour;
+
+        public void Teleport(Collider other)
+        {
+            _otherPortal._portalBehaviour.BannedCollider = other;
+            var otherTransform = other.transform;
+            otherTransform.FromMatrix(WorldInOtherPortal(otherTransform));
+            
+            var rigidbody = otherTransform.GetComponent<Rigidbody>();
+
+            if (rigidbody != null)
+            {
+                rigidbody.position = otherTransform.position;
+                rigidbody.rotation = otherTransform.rotation;
+            }
+        }
 
         private void Awake()
         {
+            _portalBehaviour = GetComponentInChildren<PortalBehaviour>();
+
             var renderCameraObject = new GameObject(transform.name + " Camera");
             _renderCamera = renderCameraObject.AddComponent<UnityEngine.Camera>();
             _renderCamera.targetTexture = _renderTexture = new RenderTexture(Screen.width, Screen.height, 16, RenderTextureFormat.ARGB32);
@@ -39,10 +56,7 @@ namespace SuperliVR.Portals
 
             _renderSurface.material.SetTexture("_MainTex", _renderTexture);
 
-            var playerCameraWorld = _playerCamera.localToWorldMatrix;
-            var playerCameraInPortal = transform.worldToLocalMatrix * playerCameraWorld;
-            var localReflected = Matrix4x4.Rotate(Quaternion.Euler(0.0f, 180.0f, 0.0f)) * playerCameraInPortal;
-            var worldInOtherPortal = _otherPortal.transform.localToWorldMatrix * localReflected;
+            var worldInOtherPortal = WorldInOtherPortal(_playerCamera);
 
             _renderCamera.transform.FromMatrix(worldInOtherPortal);
 
@@ -53,6 +67,14 @@ namespace SuperliVR.Portals
 
             var newMatrix = _renderCamera.CalculateObliqueMatrix(clipPlaneCameraSpace);
             _renderCamera.projectionMatrix = newMatrix;
+        }
+
+        private Matrix4x4 WorldInOtherPortal(Transform currentWorld)
+        {
+            var playerCameraWorld = currentWorld.localToWorldMatrix;
+            var playerCameraInPortal = transform.worldToLocalMatrix * playerCameraWorld;
+            var localReflected = Matrix4x4.Rotate(Quaternion.Euler(0.0f, 180.0f, 0.0f)) * playerCameraInPortal;
+            return _otherPortal.transform.localToWorldMatrix * localReflected;
         }
     }
 }

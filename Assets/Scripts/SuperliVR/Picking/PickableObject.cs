@@ -108,8 +108,8 @@ namespace SuperliVR.Picking
             {
                 var realSize = currentScaleMultiplier * _initialBoundingRadius * MaxComponent(_initialScale);
 
-                if (Physics.CheckCapsule(rayOrigin + (direction * realSize * 2.0f),
-                        rayOrigin + direction * (goToDist - realSize * 2.0f),
+                if (Physics.CheckCapsule(rayOrigin + (direction * realSize),
+                        rayOrigin + direction * (goToDist - realSize),
                         realSize, _sceneRaycastMask))
                 {
                     maxDist = goToDist;
