@@ -53,7 +53,7 @@ namespace SuperliVR.Picking
             {
                 var worldBounds = _collider.bounds;
                 var worldExtents = worldBounds.extents;
-                var objectExtent = MaxComponent(worldExtents) * MaxComponent(transform.lossyScale);
+                var objectExtent = MaxComponent(worldExtents);
 
                 return objectExtent;
             }
@@ -167,7 +167,7 @@ namespace SuperliVR.Picking
                     distance = CameraDistanceToWandDistance(referencePositions, cameraDist);
                 }
 
-                var currentSubtract = scaleMultiplier * MaxComponent(_initialScale) * _initialBoundingRadius * 1.01f;
+                var currentSubtract = scaleMultiplier * MaxComponent(_initialScale) * _initialBoundingRadius * 2.01f;
                 distance += previousSubtract - currentSubtract;
                 previousSubtract = currentSubtract;
             }

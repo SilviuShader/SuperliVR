@@ -1,3 +1,4 @@
+using SuperliVR.Picking;
 using UnityEngine;
 
 namespace SuperliVR.Portals
@@ -17,10 +18,19 @@ namespace SuperliVR.Portals
             if (cam != null)
                 otherForward = cam.transform.forward;
 
-            if (other.CompareTag("Player") && 
+            if (other.CompareTag("Player") &&
                 Vector3.Dot(transform.up, other.transform.position - transform.position) >= Mathf.Epsilon &&
                 Vector3.Dot(transform.up, otherForward) <= -Mathf.Epsilon)
-                _portal.Teleport(other);
+            {
+                var wandPicker = other.GetComponentInChildren<WandPicker>();
+
+                var currentlyPicking = false;
+                if (wandPicker != null)
+                    currentlyPicking = wandPicker.CurrentlyPicking;
+
+                if (!currentlyPicking)
+                    _portal.Teleport(other);
+            }
         }
     }
 }
