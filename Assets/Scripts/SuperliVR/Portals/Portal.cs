@@ -1,6 +1,4 @@
-using UnityEditor.PackageManager.UI;
 using UnityEngine;
-using UnityEngine.Rendering;
 using Utils;
 
 namespace SuperliVR.Portals
@@ -20,8 +18,9 @@ namespace SuperliVR.Portals
 
         public void Teleport(Collider other)
         {
-            _otherPortal._portalBehaviour.BannedCollider = other;
             var otherTransform = other.transform;
+            var initialScale = otherTransform.localScale;
+
             otherTransform.FromMatrix(WorldInOtherPortal(otherTransform));
             
             var rigidbody = otherTransform.GetComponent<Rigidbody>();
@@ -31,6 +30,9 @@ namespace SuperliVR.Portals
                 rigidbody.position = otherTransform.position;
                 rigidbody.rotation = otherTransform.rotation;
             }
+
+            var scaleFactor = _otherPortal.transform.localScale.y / transform.localScale.y;
+            otherTransform.localScale = initialScale * scaleFactor;
         }
 
         private void Awake()
