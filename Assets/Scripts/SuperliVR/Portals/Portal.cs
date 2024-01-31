@@ -31,7 +31,7 @@ namespace SuperliVR.Portals
                 rigidbody.rotation = otherTransform.rotation;
             }
 
-            var scaleFactor = _otherPortal.transform.localScale.y / transform.localScale.y;
+            var scaleFactor = _otherPortal.transform.lossyScale.y / transform.lossyScale.y;
             otherTransform.localScale = initialScale * scaleFactor;
         }
 

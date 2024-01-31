@@ -1,9 +1,11 @@
+using System;
+using System.Linq;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 
 namespace SuperliVR.Picking
 {
-    [RequireComponent(typeof(Collider), typeof(Rigidbody), typeof(MeshRenderer))]
+    [RequireComponent(typeof(Collider), typeof(Rigidbody))]
     public class PickableObject : MonoBehaviour
     {
         private class ReferencePositionsInfo
@@ -14,44 +16,44 @@ namespace SuperliVR.Picking
             public Vector3 WandDirection;
         }
 
-        public  float        CurrentScaleMultiplier => _currentScaleMultiplier;
-        public  float        PlacedScaleMultiplier => _placedScaleMultiplier;
+        public  float          CurrentScaleMultiplier => _currentScaleMultiplier;
+        public  float          PlacedScaleMultiplier => _placedScaleMultiplier;
 
         [SerializeField]
-        private LayerMask    _sceneRaycastMask   = -1;
+        private LayerMask      _sceneRaycastMask   = -1;
         [SerializeField]
-        private float        _maxRaycastDistance  = 100.0f;
+        private float          _maxRaycastDistance  = 100.0f;
         [SerializeField, Min(1)]
-        private int          _integrationSteps    = 20;
-        [SerializeField]
-        private int          _distanceSearchSteps = 20;
-        [SerializeField]
-        private float        _maxScaleFactor      = 100.0f;
-        [SerializeField]
-        private float        _minScaleFactor      = 0.1f;
+        private int            _integrationSteps    = 20;
+        [SerializeField]       
+        private int            _distanceSearchSteps = 20;
+        [SerializeField]       
+        private float          _maxScaleFactor      = 100.0f;
+        [SerializeField]       
+        private float          _minScaleFactor      = 0.1f;
+                               
+        private Vector3        _initialScale;
+        private float          _placedScaleMultiplier;
+        private float          _currentScaleMultiplier;
+        private Vector3        _previousPickUpDirection;
+                               
+        private Collider       _collider;
+        private Rigidbody      _rigidbody;
+        private MeshRenderer[] _meshRenderers;
 
-        private Vector3      _initialScale;
-        private float        _placedScaleMultiplier;
-        private float        _currentScaleMultiplier;
-        private Vector3      _previousPickUpDirection;
-        
-        private Collider     _collider;
-        private Rigidbody    _rigidbody;
-        private MeshRenderer _meshRenderer;
-
-        private LayerMask    _pickableLayer;
-        private LayerMask    _currentlyPickedLayer;
-
-        private float        _pickUpDistance;
-        private float        _initialBoundingRadius;
-
-        private float        ObjectBoundingRadius
+        private LayerMask      _pickableLayer;
+        private LayerMask      _currentlyPickedLayer;
+                               
+        private float          _pickUpDistance;
+        private float          _initialBoundingRadius;
+                               
+        private float          ObjectBoundingRadius
         {
             get
             {
                 var worldBounds = _collider.bounds;
                 var worldExtents = worldBounds.extents;
-                var objectExtent = MaxComponent(worldExtents) / MinComponent(transform.localScale);
+                var objectExtent = MaxComponent(worldExtents) * MaxComponent(transform.lossyScale);
 
                 return objectExtent;
             }
@@ -60,7 +62,8 @@ namespace SuperliVR.Picking
         public void PickUp(UnityEngine.Camera referenceCamera)
         {
             _rigidbody.isKinematic = true;
-            _meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            foreach (var meshRenderer in _meshRenderers)
+                meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             _currentScaleMultiplier = _placedScaleMultiplier;
             _previousPickUpDirection = ProjectXZPlane(referenceCamera.transform.forward);
             _pickUpDistance = Mathf.Max(_placedScaleMultiplier, PointToCameraDistance(transform.position, referenceCamera.transform.position, _previousPickUpDirection));
@@ -72,7 +75,8 @@ namespace SuperliVR.Picking
         public void DropDown()
         {
             _rigidbody.isKinematic = false;
-            _meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+            foreach (var meshRenderer in _meshRenderers)
+                meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
             _placedScaleMultiplier = _currentScaleMultiplier;
             _collider.isTrigger = false;
 
@@ -195,10 +199,14 @@ namespace SuperliVR.Picking
 
         private void Awake()
         {
-            _collider     = GetComponent<Collider>();
-            _rigidbody    = GetComponent<Rigidbody>();
-            _meshRenderer = GetComponent<MeshRenderer>();
+            _collider      = GetComponent<Collider>();
+            _rigidbody     = GetComponent<Rigidbody>();
+            _meshRenderers = GetComponentsInChildren<MeshRenderer>();
 
+            var currentMeshRenderer = GetComponent<MeshRenderer>();
+            if (currentMeshRenderer != null)
+                _meshRenderers = _meshRenderers.Concat(new[] { currentMeshRenderer }).ToArray();
+            
             _pickableLayer = LayerMask.NameToLayer("Pickable");
             _currentlyPickedLayer = LayerMask.NameToLayer("CurrentlyPicked");
 
@@ -208,6 +216,7 @@ namespace SuperliVR.Picking
             _placedScaleMultiplier = _currentScaleMultiplier = 1.0f;
             gameObject.layer = _pickableLayer;
             _initialBoundingRadius = ObjectBoundingRadius;
+            Debug.Log(_initialBoundingRadius + " " + gameObject.name);
 
             _previousPickUpDirection = Vector3.forward;
         }
