@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using UnityEngine;
+using Utils;
 using Vector3 = UnityEngine.Vector3;
 
 namespace SuperliVR.Picking
@@ -50,18 +51,6 @@ namespace SuperliVR.Picking
                                
         private float          _pickUpDistance;
         private float          _initialBoundingRadius;
-                               
-        private float          ObjectBoundingRadius
-        {
-            get
-            {
-                var worldBounds = _collider.bounds;
-                var worldExtents = worldBounds.extents;
-                var objectExtent = MaxComponent(worldExtents);
-
-                return objectExtent;
-            }
-        }
 
         public void PickUp(UnityEngine.Camera referenceCamera)
         {
@@ -229,37 +218,26 @@ namespace SuperliVR.Picking
             ResetState();
         }
 
+        private void Update()
+        {
+            if (_rigidbody.isKinematic)
+                return;
+
+            if (transform.hasChanged)
+            {
+                Awake();
+            }
+        }
+
         private void ResetState()
         {
             _workingScale = transform.localScale;
             _placedScaleMultiplier = _currentScaleMultiplier = 1.0f;
             gameObject.layer = _pickableLayer;
-            _initialBoundingRadius = ObjectBoundingRadius;
+            _initialBoundingRadius = ScaleHelper.ObjectBoundingRadius(_collider);
             Debug.Log(_initialBoundingRadius + " " + gameObject.name);
 
             _previousPickUpDirection = Vector3.forward;
-        }
-
-        private float MaxComponent(Vector3 vec)
-        {
-            if (vec.x > vec.y && vec.x > vec.z)
-                return vec.x;
-
-            if (vec.y > vec.x && vec.y > vec.z)
-                return vec.y;
-
-            return vec.z;
-        }
-
-        private float MinComponent(Vector3 vec)
-        {
-            if (vec.x < vec.y && vec.x < vec.z)
-                return vec.x;
-
-            if (vec.y < vec.x && vec.y < vec.z)
-                return vec.y;
-
-            return vec.z;
         }
 
         private Vector3 ProjectXZPlane(Vector3 vec)

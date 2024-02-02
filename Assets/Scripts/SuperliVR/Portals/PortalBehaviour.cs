@@ -1,15 +1,20 @@
 using SuperliVR.Picking;
 using UnityEngine;
+using Utils;
 
 namespace SuperliVR.Portals
 {
     [RequireComponent(typeof(Collider))]
     public class PortalBehaviour : MonoBehaviour
     {
-        private Portal _portal;
+        private Portal   _portal;
+        private Collider _collider;
 
-        private void Awake() =>
-            _portal = transform.parent.GetComponent<Portal>();
+        private void Awake()
+        {
+            _portal   = transform.parent.GetComponent<Portal>();
+            _collider = GetComponent<Collider>();
+        }
 
         private void OnTriggerEnter(Collider other)
         {
@@ -29,7 +34,8 @@ namespace SuperliVR.Portals
                     currentlyPicking = wandPicker.CurrentlyPicking;
 
                 if (!currentlyPicking)
-                    _portal.Teleport(other);
+                    if (ScaleHelper.ObjectBoundingRadius(other) < ScaleHelper.ObjectBoundingRadius(_collider))
+                        _portal.Teleport(other);
             }
         }
     }
