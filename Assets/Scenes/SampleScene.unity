@@ -5804,7 +5804,7 @@ MonoBehaviour:
   _integrationSteps: 50
   _distanceSearchSteps: 50
   _maxScaleFactor: 500
-  _minScaleFactor: 1
+  _minScaleFactor: 0.1
 --- !u!1 &2050120584
 GameObject:
   m_ObjectHideFlags: 0

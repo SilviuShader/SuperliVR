@@ -27,12 +27,16 @@ namespace SuperliVR.Picking
         private int            _integrationSteps    = 20;
         [SerializeField]       
         private int            _distanceSearchSteps = 20;
-        [SerializeField]       
-        private float          _maxScaleFactor      = 100.0f;
-        [SerializeField]       
+        [SerializeField]
+        private float          _maxScaleFactor      = 500.0f;
+        [SerializeField]
         private float          _minScaleFactor      = 0.1f;
+ 
+        private float          _workingMaxScaleFactor;
+        private float          _workingMinScaleFactor;
                                
-        private Vector3        _initialScale;
+        private Vector3        _initialWorkingScale;
+        private Vector3        _workingScale;
         private float          _placedScaleMultiplier;
         private float          _currentScaleMultiplier;
         private Vector3        _previousPickUpDirection;
@@ -81,7 +85,13 @@ namespace SuperliVR.Picking
             _collider.isTrigger = false;
 
             gameObject.layer = _pickableLayer;
+            
+            ResetState(); 
 
+            _workingMaxScaleFactor = (_maxScaleFactor / _initialWorkingScale.x) * _workingScale.x;
+            _workingMinScaleFactor = (_minScaleFactor / _initialWorkingScale.x) * _workingScale.x;
+
+            Debug.Log("working scale: " + _workingMinScaleFactor + " " + _workingMaxScaleFactor + " " + gameObject.name);
         }
 
         public void SetDirection(UnityEngine.Camera referenceCamera, Vector3 wandPosition, Vector3 direction)
@@ -110,7 +120,7 @@ namespace SuperliVR.Picking
 
             for (var i = 0; i < _distanceSearchSteps; i++)
             {
-                var realSize = currentScaleMultiplier * _initialBoundingRadius * MaxComponent(_initialScale);
+                var realSize = currentScaleMultiplier * _initialBoundingRadius;
 
                 if (Physics.CheckCapsule(rayOrigin + (direction * realSize),
                         rayOrigin + direction * (goToDist - realSize),
@@ -130,7 +140,7 @@ namespace SuperliVR.Picking
 
             _currentScaleMultiplier = GetScaleMultiplier(referencePos, ref goToDist);
             
-            transform.localScale = _initialScale * _currentScaleMultiplier;
+            transform.localScale = _workingScale * _currentScaleMultiplier;
             transform.position = rayOrigin + goToDist * direction;
 
             var currentDirection = ProjectXZPlane(direction);
@@ -149,15 +159,15 @@ namespace SuperliVR.Picking
             {
                 scaleMultiplier = (WandDistanceToCameraDistance(referencePositions, distance) * _placedScaleMultiplier) / _pickUpDistance;
                 var changedRadius = false;
-                if (scaleMultiplier >= _maxScaleFactor)
+                if (scaleMultiplier >= _workingMaxScaleFactor)
                 {
-                    scaleMultiplier = _maxScaleFactor;
+                    scaleMultiplier = _workingMaxScaleFactor;
                     changedRadius = true;
                 }
 
-                if (scaleMultiplier < _minScaleFactor)
+                if (scaleMultiplier < _workingMinScaleFactor)
                 {
-                    scaleMultiplier = _minScaleFactor;
+                    scaleMultiplier = _workingMinScaleFactor;
                     changedRadius = true;
                 }
 
@@ -167,7 +177,7 @@ namespace SuperliVR.Picking
                     distance = CameraDistanceToWandDistance(referencePositions, cameraDist);
                 }
 
-                var currentSubtract = scaleMultiplier * MaxComponent(_initialScale) * _initialBoundingRadius * 2.01f;
+                var currentSubtract = scaleMultiplier * _initialBoundingRadius * 1.01f;
                 distance += previousSubtract - currentSubtract;
                 previousSubtract = currentSubtract;
             }
@@ -212,7 +222,16 @@ namespace SuperliVR.Picking
 
             _sceneRaycastMask &= ~(1 << _currentlyPickedLayer);
 
-            _initialScale = transform.localScale;
+            _workingMaxScaleFactor = _maxScaleFactor;
+            _workingMinScaleFactor = _minScaleFactor;
+
+            _initialWorkingScale = transform.localScale;
+            ResetState();
+        }
+
+        private void ResetState()
+        {
+            _workingScale = transform.localScale;
             _placedScaleMultiplier = _currentScaleMultiplier = 1.0f;
             gameObject.layer = _pickableLayer;
             _initialBoundingRadius = ObjectBoundingRadius;
