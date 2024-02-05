@@ -78,11 +78,8 @@ namespace SuperliVR.Movement
 
             _rigidbody.velocity = velocity;
 
-            _desiredVelocity = Vector3.zero;
             _desiredVerticalVelocity = Vector3.zero;
-
             _onGround = false;
-
         }
 
         private void UpdateState()

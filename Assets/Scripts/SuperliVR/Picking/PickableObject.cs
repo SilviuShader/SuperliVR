@@ -79,8 +79,6 @@ namespace SuperliVR.Picking
 
             _workingMaxScaleFactor = (_maxScaleFactor / _initialWorkingScale.x) * _workingScale.x;
             _workingMinScaleFactor = (_minScaleFactor / _initialWorkingScale.x) * _workingScale.x;
-
-            Debug.Log("working scale: " + _workingMinScaleFactor + " " + _workingMaxScaleFactor + " " + gameObject.name);
         }
 
         public void SetDirection(UnityEngine.Camera referenceCamera, Vector3 wandPosition, Vector3 direction)
@@ -235,7 +233,6 @@ namespace SuperliVR.Picking
             _placedScaleMultiplier = _currentScaleMultiplier = 1.0f;
             gameObject.layer = _pickableLayer;
             _initialBoundingRadius = ScaleHelper.ObjectBoundingRadius(_collider);
-            Debug.Log(_initialBoundingRadius + " " + gameObject.name);
 
             _previousPickUpDirection = Vector3.forward;
         }

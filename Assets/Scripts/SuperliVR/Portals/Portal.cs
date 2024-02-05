@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Rendering;
 using Utils;
 using Valve.VR;
 
@@ -58,17 +59,24 @@ namespace SuperliVR.Portals
 
             if (VRHelper.Instance.VRMode)
                 InitVRCameras();
+
+            RenderPipelineManager.beginCameraRendering += OnRenderCallback;
         }
 
         private void OnDestroy()
         {
+            RenderPipelineManager.beginCameraRendering -= OnRenderCallback;
+
             _renderTexture1.Release();
             _renderTexture2.Release();
         }
 
-        private void Update()
+        private void Update() => RecreateRenderTextures();
+        
+        private void OnRenderCallback(ScriptableRenderContext context, UnityEngine.Camera cam)
         {
-            RecreateRenderTextures();
+            if (cam != _renderCamera1 && cam != _renderCamera2)
+                return;
 
             var worldInOtherPortal = WorldInOtherPortal(_playerCamera);
             _renderCamera1.transform.FromMatrix(worldInOtherPortal);
@@ -79,7 +87,7 @@ namespace SuperliVR.Portals
 
             if (!VRHelper.Instance.VRMode)
             {
-                //_renderSurface.material = _portalMaterial;
+                _renderSurface.material = _portalMaterial;
                 _renderSurface.material.SetTexture("_MainTex", _renderTexture1);
 
                 var clipPlaneCameraSpace =
@@ -90,7 +98,7 @@ namespace SuperliVR.Portals
             else
             {
                 _renderSurface.material = _vrPortalMaterial;
-                _renderSurface.material.SetTexture("_LeftEyeTex",  _renderTexture1);
+                _renderSurface.material.SetTexture("_LeftEyeTex", _renderTexture1);
                 _renderSurface.material.SetTexture("_RightEyeTex", _renderTexture2);
 
                 _renderCamera1.transform.position += _renderCamera1.transform.TransformVector(SteamVR.instance.eyes[0].pos);
