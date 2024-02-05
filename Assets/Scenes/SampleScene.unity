@@ -155,6 +155,8 @@ MonoBehaviour:
   _otherPortal: {fileID: 1943142752}
   _renderSurface: {fileID: 1563459798}
   _playerCamera: {fileID: 1938108534}
+  _portalMaterial: {fileID: 2100000, guid: 1473cf57cfb40e84ea3da5ae363d741c, type: 2}
+  _vrPortalMaterial: {fileID: 2100000, guid: 7ae81a90d4d4a6e44b834c585419c8a2, type: 2}
 --- !u!4 &2815379
 Transform:
   m_ObjectHideFlags: 0
@@ -5489,6 +5491,8 @@ MonoBehaviour:
   _otherPortal: {fileID: 2815378}
   _renderSurface: {fileID: 1840799102}
   _playerCamera: {fileID: 1938108534}
+  _portalMaterial: {fileID: 2100000, guid: 1473cf57cfb40e84ea3da5ae363d741c, type: 2}
+  _vrPortalMaterial: {fileID: 2100000, guid: 7ae81a90d4d4a6e44b834c585419c8a2, type: 2}
 --- !u!1 &1956418776
 GameObject:
   m_ObjectHideFlags: 0
@@ -5724,8 +5728,8 @@ Transform:
   m_GameObject: {fileID: 2032995227}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 12.63, y: 0.598, z: 14.75}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalPosition: {x: 14.61, y: 0.598, z: -11.08}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 43938401}

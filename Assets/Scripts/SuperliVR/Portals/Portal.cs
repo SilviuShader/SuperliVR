@@ -13,9 +13,16 @@ namespace SuperliVR.Portals
         private MeshRenderer       _renderSurface;
         [SerializeField]
         private Transform          _playerCamera;
+        [SerializeField]
+        private Material           _portalMaterial;
+        [SerializeField]
+        private Material           _vrPortalMaterial;
         
-        private UnityEngine.Camera _renderCamera;
-        private RenderTexture      _renderTexture;
+        private UnityEngine.Camera _renderCamera1;
+        private UnityEngine.Camera _renderCamera2;
+
+        private RenderTexture      _renderTexture1;
+        private RenderTexture      _renderTexture2;
         private PortalBehaviour    _portalBehaviour;
 
         public void Teleport(Collider other)
@@ -41,31 +48,66 @@ namespace SuperliVR.Portals
         {
             _portalBehaviour = GetComponentInChildren<PortalBehaviour>();
 
-            var renderCameraObject = new GameObject(transform.name + " Camera");
-            _renderCamera = renderCameraObject.AddComponent<UnityEngine.Camera>();
-            _renderCamera.targetTexture = _renderTexture = new RenderTexture(Screen.width, Screen.height, 16, RenderTextureFormat.ARGB32);
-            _renderTexture.Create();
+            var renderCamera1Object = new GameObject(transform.name + " Left Camera");
+            _renderCamera1 = renderCamera1Object.AddComponent<UnityEngine.Camera>();
+
+            var renderCamera2Object = new GameObject(transform.name + " Right Camera");
+            _renderCamera2 = renderCamera2Object.AddComponent<UnityEngine.Camera>();
+
+            RecreateRenderTextures();
 
             if (VRHelper.Instance.VRMode)
-                InitVRCamera();
+                InitVRCameras();
         }
 
-        private void InitVRCamera()
+        private void OnDestroy()
         {
-            Valve.VR.EVREye eye;
-            //if (isLeftEye)
-            //{
-                eye = Valve.VR.EVREye.Eye_Left;
-            //}
-            //else
-            //{
-            //    eye = Valve.VR.EVREye.Eye_Right;
-            //}
-            _renderCamera.projectionMatrix = HMDMatrix4x4ToMatrix4x4(SteamVR.instance.hmd.GetProjectionMatrix(eye, _renderCamera.nearClipPlane, _renderCamera.farClipPlane));
+            _renderTexture1.Release();
+            _renderTexture2.Release();
         }
-        private void OnDestroy() => _renderTexture.Release();
 
         private void Update()
+        {
+            RecreateRenderTextures();
+
+            var worldInOtherPortal = WorldInOtherPortal(_playerCamera);
+            _renderCamera1.transform.FromMatrix(worldInOtherPortal);
+            _renderCamera2.transform.FromMatrix(worldInOtherPortal);
+
+            var p = new Plane(-_otherPortal.transform.forward, _otherPortal.transform.position);
+            var clipPlaneWorldSpace = new Vector4(p.normal.x, p.normal.y, p.normal.z, p.distance);
+
+            if (!VRHelper.Instance.VRMode)
+            {
+                //_renderSurface.material = _portalMaterial;
+                _renderSurface.material.SetTexture("_MainTex", _renderTexture1);
+
+                var clipPlaneCameraSpace =
+                    Matrix4x4.Transpose(Matrix4x4.Inverse(_renderCamera1.worldToCameraMatrix)) * clipPlaneWorldSpace;
+
+                _renderCamera1.projectionMatrix = _renderCamera1.CalculateObliqueMatrix(clipPlaneCameraSpace);
+            }
+            else
+            {
+                _renderSurface.material = _vrPortalMaterial;
+                _renderSurface.material.SetTexture("_LeftEyeTex",  _renderTexture1);
+                _renderSurface.material.SetTexture("_RightEyeTex", _renderTexture2);
+
+                _renderCamera1.transform.position += _renderCamera1.transform.TransformVector(SteamVR.instance.eyes[0].pos);
+                _renderCamera2.transform.position += _renderCamera2.transform.TransformVector(SteamVR.instance.eyes[1].pos);
+
+                var clipPlaneCamera1Space =
+                    Matrix4x4.Transpose(Matrix4x4.Inverse(_renderCamera1.worldToCameraMatrix)) * clipPlaneWorldSpace;
+                var clipPlaneCamera2Space =
+                    Matrix4x4.Transpose(Matrix4x4.Inverse(_renderCamera2.worldToCameraMatrix)) * clipPlaneWorldSpace;
+
+                _renderCamera1.projectionMatrix = CalculateObliqueMatrix(_renderCamera1.projectionMatrix, clipPlaneCamera1Space);
+                _renderCamera2.projectionMatrix = CalculateObliqueMatrix(_renderCamera2.projectionMatrix, clipPlaneCamera2Space);
+            }
+
+        }
+
+        private void RecreateRenderTextures()
         {
             var targetWidth = Screen.width;
             var targetHeight = Screen.height;
@@ -76,40 +118,28 @@ namespace SuperliVR.Portals
                 targetHeight = UnityEngine.XR.XRSettings.eyeTextureHeight;
             }
 
-            if (targetWidth != _renderTexture.width || targetHeight != _renderTexture.height)
+            var currentWidth = _renderTexture1  != null ? _renderTexture1.width  : 0;
+            var currentHeight = _renderTexture1 != null ? _renderTexture1.height : 0;
+
+            if (targetWidth != currentWidth || targetHeight != currentHeight)
             {
-                _renderTexture.Release();
-                _renderCamera.targetTexture = _renderTexture = new RenderTexture(targetWidth, targetHeight, 16, RenderTextureFormat.ARGB32);
-                _renderTexture.Create();
+                if (_renderTexture1 != null)
+                    _renderTexture1.Release();
+
+                if (_renderTexture2 != null)
+                    _renderTexture2.Release();
+
+                _renderCamera1.targetTexture = _renderTexture1 = new RenderTexture(targetWidth, targetHeight, 16, RenderTextureFormat.ARGB32);
+                _renderTexture1.Create();
+
+                _renderCamera2.targetTexture = _renderTexture2 = new RenderTexture(targetWidth, targetHeight, 16, RenderTextureFormat.ARGB32);
+                _renderTexture2.Create();
             }
-
-            _renderSurface.material.SetTexture("_MainTex", _renderTexture);
-
-            var worldInOtherPortal = WorldInOtherPortal(_playerCamera);
-            _renderCamera.transform.FromMatrix(worldInOtherPortal);
-
-            if (VRHelper.Instance.VRMode)
-            {
-                Vector3 eyeOffset = Vector3.zero;
-                //if (isLeftEye)
-                //{
-                    eyeOffset = SteamVR.instance.eyes[0].pos;
-                //}
-                //else
-                //{
-                //    eyeOffset = SteamVR.instance.eyes[1].pos;
-                //}
-
-                _renderCamera.transform.position += _renderCamera.transform.TransformVector(eyeOffset);
-                _renderCamera.transform.localRotation = _renderCamera.transform.localRotation;
-            }
-
-            var p = new Plane(-_otherPortal.transform.forward, _otherPortal.transform.position);
-            var clipPlaneWorldSpace = new Vector4(p.normal.x, p.normal.y, p.normal.z, p.distance);
-            var clipPlaneCameraSpace =
-                Matrix4x4.Transpose(Matrix4x4.Inverse(_renderCamera.worldToCameraMatrix)) * clipPlaneWorldSpace;
-            
-            _renderCamera.projectionMatrix = CalculateObliqueMatrix(_renderCamera.projectionMatrix, clipPlaneCameraSpace);
+        }
+        private void InitVRCameras()
+        {
+            _renderCamera1.projectionMatrix = HMDMatrix4x4ToMatrix4x4(SteamVR.instance.hmd.GetProjectionMatrix(EVREye.Eye_Left,  _renderCamera1.nearClipPlane, _renderCamera1.farClipPlane));
+            _renderCamera2.projectionMatrix = HMDMatrix4x4ToMatrix4x4(SteamVR.instance.hmd.GetProjectionMatrix(EVREye.Eye_Right, _renderCamera1.nearClipPlane, _renderCamera1.farClipPlane));
         }
 
         private Matrix4x4 WorldInOtherPortal(Transform currentWorld)

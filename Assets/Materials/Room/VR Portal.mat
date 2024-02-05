@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Portal
-  m_Shader: {fileID: -6465566751694194690, guid: 12a93a814f012c442ae45974b75ea01b,
+  m_Name: VR Portal
+  m_Shader: {fileID: -6465566751694194690, guid: a9bcc92c393a3714c8bafc9af7d86955,
     type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
