@@ -164,7 +164,7 @@ namespace SuperliVR.Picking
                     distance = CameraDistanceToWandDistance(referencePositions, cameraDist);
                 }
 
-                var currentSubtract = scaleMultiplier * _initialBoundingRadius * 1.01f;
+                var currentSubtract = scaleMultiplier * _initialBoundingRadius * 0.5f;
                 distance += previousSubtract - currentSubtract;
                 previousSubtract = currentSubtract;
             }

@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 5842209797803048919}
   m_Layer: 8
   m_Name: PlayerCharacter
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -79,7 +79,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _movementSpeed: 10
   _maxAcceleration: 100
-  _maxAirAcceleration: 10
+  _maxAirAcceleration: 50
   _maxJumpHeight: 3
   _maxAirJumps: 0
   _playerInputSpace: {fileID: 8262324057735348853}
