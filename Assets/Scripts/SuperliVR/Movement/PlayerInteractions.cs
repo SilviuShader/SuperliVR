@@ -47,7 +47,7 @@ namespace SuperliVR.Movement
             if (_onGround || _jumpPhase < _maxAirJumps)
             {
                 _jumpPhase += 1;
-                float jumpSpeed = Mathf.Sqrt(-2f * Physics.gravity.y * _maxJumpHeight);
+                float jumpSpeed = Mathf.Sqrt(-2f * Physics.gravity.y * _maxJumpHeight * transform.lossyScale.y);
                 if (_desiredVerticalVelocity.y > 0f)
                 {
                     jumpSpeed = Mathf.Max(jumpSpeed - _desiredVerticalVelocity.y, 0f);
